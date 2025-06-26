@@ -19,6 +19,40 @@
             --color-error: #f56565;
             --color-success: #48bb78;
             --grid-maxWidth: 1200px;
+            
+            /* Light mode colors */
+            --surface-color: #ffffff;
+            --surface-secondary: #f7fafc;
+            --surface-tertiary: #e2e8f0;
+            --text-primary: #2d3748;
+            --text-secondary: #4a5568;
+            --text-tertiary: #718096;
+            --border-color: #e2e8f0;
+            --shadow-color: rgba(0, 0, 0, 0.1);
+            --nav-bg: rgba(255, 255, 255, 0.95);
+            --nav-shadow: rgba(0, 0, 0, 0.1);
+        }
+        
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --color-lightGrey: #2d3748;
+                --color-grey: #4a5568;
+                --color-darkGrey: #e2e8f0;
+                --color-error: #fc8181;
+                --color-success: #68d391;
+                
+                /* Dark mode colors */
+                --surface-color: #1a202c;
+                --surface-secondary: #2d3748;
+                --surface-tertiary: #4a5568;
+                --text-primary: #f7fafc;
+                --text-secondary: #e2e8f0;
+                --text-tertiary: #a0aec0;
+                --border-color: #4a5568;
+                --shadow-color: rgba(0, 0, 0, 0.3);
+                --nav-bg: rgba(26, 32, 44, 0.95);
+                --nav-shadow: rgba(0, 0, 0, 0.3);
+            }
         }
 
         body {
@@ -30,9 +64,9 @@
 
         /* Navigation Styles */
         .navbar {
-            background: rgba(255, 255, 255, 0.95);
+            background: var(--nav-bg);
             backdrop-filter: blur(10px);
-            box-shadow: 0 2px 20px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 20px var(--nav-shadow);
             position: sticky;
             top: 0;
             z-index: 1000;
@@ -51,7 +85,7 @@
         .nav-brand {
             font-size: 1.5rem;
             font-weight: bold;
-            color: var(--color-darkGrey);
+            color: var(--text-secondary);
             text-decoration: none;
             display: flex;
             align-items: center;
@@ -77,7 +111,7 @@
             border: none;
             font-size: 1.5rem;
             cursor: pointer;
-            color: var(--color-darkGrey);
+            color: var(--text-secondary);
         }
 
         .nav-toggle:hover {
@@ -86,7 +120,7 @@
 
         .nav-link {
             text-decoration: none;
-            color: var(--color-darkGrey);
+            color: var(--text-secondary);
             font-weight: 500;
             padding: 0.5rem 1rem;
             border-radius: 8px;
@@ -110,12 +144,12 @@
                 left: -100%;
                 top: 70px;
                 flex-direction: column;
-                background-color: rgba(255, 255, 255, 0.98);
+                background-color: var(--nav-bg);
                 backdrop-filter: blur(10px);
                 width: 100%;
                 text-align: center;
                 transition: 0.3s;
-                box-shadow: 0 10px 27px rgba(0,0,0,0.05);
+                box-shadow: 0 10px 27px var(--nav-shadow);
                 padding: 2rem 0;
             }
 
@@ -136,12 +170,13 @@
         }
 
         .content-container {
-            background: white;
+            background: var(--surface-color);
             border-radius: 15px;
             padding: 2rem;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            box-shadow: 0 10px 30px var(--shadow-color);
             margin: 0 auto;
             max-width: var(--grid-maxWidth);
+            color: var(--text-primary);
         }
 
         .tab-content {
@@ -168,12 +203,13 @@
 
         /* Result and Error Styles */
         .result-box {
-            background: #f0fff4;
-            border: 2px solid #9ae6b4;
+            background: var(--surface-secondary);
+            border: 2px solid var(--color-success);
             border-radius: 8px;
             padding: 1.5rem;
             margin-top: 2rem;
             display: none;
+            color: var(--text-primary);
         }
 
         .result-box.show {
@@ -182,9 +218,9 @@
         }
 
         .error-box {
-            background: #fed7d7;
-            border: 2px solid #fc8181;
-            color: #742a2a;
+            background: var(--surface-secondary);
+            border: 2px solid var(--color-error);
+            color: var(--color-error);
             border-radius: 8px;
             padding: 1.5rem;
             margin-top: 2rem;
@@ -198,7 +234,7 @@
         .result-value {
             font-size: 2rem;
             font-weight: bold;
-            color: #38a169;
+            color: var(--color-success);
             margin: 1rem 0;
         }
 
@@ -211,56 +247,56 @@
         .model-test { 
             margin: 1.5rem 0; 
             padding: 1.5rem; 
-            border: 1px solid #e2e8f0; 
-            border-radius: 8px; 
+            border: 1px solid var(--border-color); 
+            border-radius: 8px;
+            background: var(--surface-secondary);
+            color: var(--text-primary);
         }
 
         .model-test.good { 
-            border-color: #48bb78; 
-            background: #f0fff4; 
+            border-color: var(--color-success); 
+            background: var(--surface-secondary);
         }
 
         .model-test.bad { 
-            border-color: #f56565; 
-            background: #fed7d7; 
+            border-color: var(--color-error); 
+            background: var(--surface-secondary);
         }
 
         .model-test.medium { 
             border-color: #ed8936; 
-            background: #fffaf0; 
+            background: var(--surface-secondary);
         }
 
         /* Advanced Models Styles */
         .model-result { 
             margin: 1rem 0; 
             padding: 1.5rem; 
-            border: 1px solid #e2e8f0; 
+            border: 1px solid var(--border-color); 
             border-radius: 8px; 
             display: flex;
             justify-content: space-between;
             align-items: center;
             flex-wrap: wrap;
             gap: 1rem;
+            background: var(--surface-secondary);
+            color: var(--text-primary);
         }
 
         .model-result.excellent { 
-            border-color: #48bb78; 
-            background: #f0fff4; 
+            border-color: var(--color-success); 
         }
 
         .model-result.good { 
-            border-color: #68d391; 
-            background: #f0fff4; 
+            border-color: var(--color-success); 
         }
 
         .model-result.fair { 
             border-color: #ed8936; 
-            background: #fffaf0; 
         }
 
         .model-result.poor { 
-            border-color: #f56565; 
-            background: #fed7d7; 
+            border-color: var(--color-error); 
         }
 
         .model-info { 
@@ -275,8 +311,8 @@
         }
 
         .winner {
-            border: 3px solid #48bb78;
-            background: #f0fff4;
+            border: 3px solid var(--color-success);
+            background: var(--surface-secondary);
             position: relative;
         }
 
@@ -285,7 +321,7 @@
             position: absolute;
             top: -10px;
             right: 10px;
-            background: #48bb78;
+            background: var(--color-success);
             color: white;
             padding: 0.3rem 0.8rem;
             border-radius: 4px;
@@ -294,36 +330,106 @@
         }
 
         .equation-box {
-            background: #f7fafc;
+            background: var(--surface-tertiary);
             padding: 1rem;
             border-radius: 8px;
             margin: 1rem 0;
             font-family: 'Monaco', 'Consolas', monospace;
             font-size: 0.9rem;
             overflow-x: auto;
+            color: var(--text-primary);
+            border: 1px solid var(--border-color);
         }
 
         .parameters-box {
-            background: #e3f2fd;
+            background: var(--surface-tertiary);
             padding: 1rem;
             border-radius: 8px;
             margin: 1rem 0;
             font-size: 0.9rem;
+            color: var(--text-primary);
+            border: 1px solid var(--border-color);
         }
 
         .note-box {
-            background: #fef5e7;
-            border: 1px solid #f6e05e;
+            background: var(--surface-secondary);
+            border: 1px solid var(--border-color);
             padding: 1rem;
             border-radius: 8px;
             margin-top: 1.5rem;
             font-size: 0.9rem;
-            color: #744210;
+            color: var(--text-secondary);
         }
 
         /* Table Styles */
         table {
             margin: 1rem 0;
+            background: var(--surface-color);
+            color: var(--text-primary);
+        }
+        
+        table th {
+            background: var(--surface-secondary);
+            color: var(--text-primary);
+            border-color: var(--border-color);
+        }
+        
+        table td {
+            border-color: var(--border-color);
+        }
+        
+        /* Form Styles */
+        input[type="number"], textarea {
+            background: var(--surface-color);
+            color: var(--text-primary);
+            border-color: var(--border-color);
+        }
+        
+        input[type="number"]:focus {
+            border-color: var(--color-primary);
+        }
+        
+        label {
+            color: var(--text-secondary);
+        }
+        
+        .text-grey {
+            color: var(--text-tertiary) !important;
+        }
+        
+        small {
+            color: var(--text-tertiary);
+        }
+        
+        /* Chota Framework Dark Mode Overrides */
+        @media (prefers-color-scheme: dark) {
+            /* Override Chota's default styles for dark mode */
+            .button, button {
+                color: white;
+            }
+            
+            .button.outline {
+                color: var(--text-primary);
+                border-color: var(--border-color);
+            }
+            
+            .button.outline:hover {
+                background: var(--color-primary);
+                color: white;
+            }
+            
+            h1, h2, h3, h4, h5, h6 {
+                color: var(--text-primary);
+            }
+            
+            p {
+                color: var(--text-primary);
+            }
+            
+            /* Dark mode text utilities */
+            .text-center {
+                color: var(--text-primary);
+            }
         }
 
         /* Responsive adjustments */
@@ -729,7 +835,7 @@
                     const closest = findClosestDataPoint(null, yeast, time);
                     if (closest) {
                         csvComparison = `
-                            <div class="card" style="background: #e6fffa; margin-top: 1rem;">
+                            <div class="equation-box" style="margin-top: 1rem;">
                                 <h4>📊 Closest CSV Data Point:</h4>
                                 <p><strong>Temperature:</strong> ${closest.temperature}°C (actual data)</p>
                                 <p><strong>Yeast:</strong> ${closest.yeast}% | <strong>Time:</strong> ${closest.time} hours</p>
@@ -756,7 +862,7 @@
                     const closest = findClosestDataPoint(temp, null, time);
                     if (closest) {
                         csvComparison = `
-                            <div class="card" style="background: #e6fffa; margin-top: 1rem;">
+                            <div class="equation-box" style="margin-top: 1rem;">
                                 <h4>📊 Closest CSV Data Point:</h4>
                                 <p><strong>Yeast Concentration:</strong> ${closest.yeast}% (actual data)</p>
                                 <p><strong>Temperature:</strong> ${closest.temperature}°C | <strong>Time:</strong> ${closest.time} hours</p>
@@ -783,7 +889,7 @@
                     const exactMatch = getExactDataPoint(temp, yeast);
                     if (exactMatch) {
                         csvComparison = `
-                            <div class="card" style="background: #f0fff4; border: 2px solid #68d391; margin-top: 1rem;">
+                            <div class="model-test good" style="margin-top: 1rem;">
                                 <h4>🎯 Exact CSV Match Found!</h4>
                                 <p><strong>Actual Time from CSV:</strong> ${exactMatch.time} hours</p>
                                 <p><strong>Model Prediction:</strong> ${result.toFixed(1)} hours</p>
@@ -795,7 +901,7 @@
                         const closest = findClosestDataPoint(temp, yeast, null);
                         if (closest) {
                             csvComparison = `
-                                <div class="card" style="background: #e6fffa; margin-top: 1rem;">
+                                <div class="equation-box" style="margin-top: 1rem;">
                                     <h4>📊 Closest CSV Data Point:</h4>
                                     <p><strong>Actual Time:</strong> ${closest.time} hours (from CSV)</p>
                                     <p><strong>Temperature:</strong> ${closest.temperature}°C | <strong>Yeast:</strong> ${closest.yeast}%</p>
@@ -1177,7 +1283,7 @@ ${functionBody}`;
 
             const bestModel = results[0];
             html += `
-                <div class="card" style="margin-top: 2rem; padding: 1.5rem; background: #f0fff4; border: 2px solid #48bb78;">
+                <div class="model-test good" style="margin-top: 2rem;">
                     <h3>🎯 Winner: ${bestModel.model.name}</h3>
                     <p><strong>Why it's better:</strong></p>
                     <ul>
