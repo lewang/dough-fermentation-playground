@@ -312,6 +312,100 @@
             return 'poor';
         }
 
+        function generateJavaScriptCode(model) {
+            // Generate clean JavaScript code for each model type
+            const params = model.defaultParams;
+            const paramNames = model.paramNames;
+            
+            let constants = '';
+            let functionBody = '';
+            
+            switch(model.name) {
+                case "Optimized Arrhenius":
+                    constants = `const A = ${params[0].toExponential(2)};
+const Ea = ${params[1]};
+const n = ${params[2]};`;
+                    functionBody = `function predictTime(temp, yeast) {
+    const tempK = temp + 273.15;
+    return A * Math.exp(Ea / (8.314 * tempK)) * Math.pow(yeast, -n);
+}`;
+                    break;
+                    
+                case "Power Law":
+                    constants = `const a = ${params[0]};
+const b = ${params[1]};
+const c = ${params[2]};`;
+                    functionBody = `function predictTime(temp, yeast) {
+    return a * Math.pow(temp, b) * Math.pow(yeast, c);
+}`;
+                    break;
+                    
+                case "Logistic Model":
+                    constants = `const a = ${params[0]};
+const b = ${params[1]};
+const c = ${params[2]};`;
+                    functionBody = `function predictTime(temp, yeast) {
+    return a / (1 + b * Math.exp(-c * yeast * temp));
+}`;
+                    break;
+                    
+                case "Modified Gompertz":
+                    constants = `const A = ${params[0]};
+const mu = ${params[1]};
+const lambda = ${params[2]};
+const n = ${params[3]};`;
+                    functionBody = `function predictTime(temp, yeast) {
+    return (A * Math.exp(-Math.exp((mu/A) * (lambda - temp) + 1))) / Math.pow(yeast, n);
+}`;
+                    break;
+                    
+                case "Exponential-Power":
+                    constants = `const a = ${params[0]};
+const b = ${params[1]};
+const c = ${params[2]};`;
+                    functionBody = `function predictTime(temp, yeast) {
+    return a * Math.exp(b/temp) * Math.pow(yeast, c);
+}`;
+                    break;
+                    
+                case "Polynomial Temperature":
+                    constants = `const a = ${params[0]};
+const b = ${params[1]};
+const c = ${params[2]};
+const d = ${params[3]};`;
+                    functionBody = `function predictTime(temp, yeast) {
+    return (a + b*temp + c*temp*temp) * Math.pow(yeast, d);
+}`;
+                    break;
+                    
+                case "Monod-like Model":
+                    constants = `const a = ${params[0]};
+const Ks = ${params[1]};
+const Tmin = ${params[2]};`;
+                    functionBody = `function predictTime(temp, yeast) {
+    return (a * Ks) / ((temp - Tmin) * (yeast + Ks));
+}`;
+                    break;
+                    
+                case "Square Root Model":
+                    constants = `const a = ${params[0]};
+const b = ${params[1]};
+const c = ${params[2]};`;
+                    functionBody = `function predictTime(temp, yeast) {
+    return a * Math.sqrt(temp) * Math.pow(yeast, b) + c;
+}`;
+                    break;
+                    
+                default:
+                    return `// Error: Unknown model type\n// Parameters: ${paramNames.map((name, i) => `${name}=${params[i]}`).join(', ')}`;
+            }
+            
+            return `// Model: ${model.name}
+${constants}
+
+${functionBody}`;
+        }
+
         function testAllModels() {
             const dataPoints = getValidDataPoints();
             let results = [];
@@ -368,11 +462,8 @@
                     </ul>
                     
                     <h4>Updated JavaScript for your webapp:</h4>
-                    <textarea readonly style="width: 100%; height: 80px; font-family: monospace;">
-function predictTime(temp, yeast) {
-    return ${bestModel.model.func.toString().replace('function(temp, yeast, ', '').replace(')', '').replace('{', '').replace('}', '').trim()};
-}
-// Parameters: ${bestModel.model.paramNames.map((name, i) => `${name}=${bestModel.model.defaultParams[i]}`).join(', ')}
+                    <textarea readonly style="width: 100%; height: 120px; font-family: monospace;">
+${generateJavaScriptCode(bestModel.model)}
                     </textarea>
                 </div>
             `;
