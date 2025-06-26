@@ -1,0 +1,798 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>D3 Gantt Chart Playground</title>
+    
+    <!-- D3.js -->
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    
+    <!-- Chota CSS Framework -->
+    <link rel="stylesheet" href="https://unpkg.com/chota@latest">
+    
+    <style>
+        :root {
+            --bg-color: #f8f9fa;
+            --bg-secondary-color: #e9ecef;
+            --surface-color: #ffffff;
+            --surface-secondary: #f8f9fa;
+            --text-primary: #212529;
+            --text-secondary: #495057;
+            --border-color: #dee2e6;
+            --shadow-color: rgba(0, 0, 0, 0.15);
+        }
+        
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --bg-color: #343a40;
+                --bg-secondary-color: #495057;
+                --surface-color: #212529;
+                --surface-secondary: #343a40;
+                --text-primary: #f8f9fa;
+                --text-secondary: #e9ecef;
+                --border-color: #495057;
+                --shadow-color: rgba(0, 0, 0, 0.5);
+            }
+        }
+
+        body {
+            background: linear-gradient(135deg, var(--bg-color) 0%, var(--bg-secondary-color) 100%);
+            min-height: 100vh;
+            margin: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: var(--text-primary);
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .playground {
+            background: var(--surface-color);
+            border-radius: 15px;
+            padding: 2rem;
+            box-shadow: 0 10px 30px var(--shadow-color);
+            margin-bottom: 2rem;
+        }
+
+        .controls {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+            padding: 1.5rem;
+            background: var(--surface-secondary);
+            border-radius: 10px;
+        }
+
+        .control-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .control-group label {
+            font-weight: 600;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        input, select, textarea {
+            background: var(--surface-color);
+            color: var(--text-primary);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            padding: 0.5rem;
+        }
+
+        .button {
+            background: #f0f6ff;
+            border: 1px solid #d1e2ff;
+            color: #4a5568;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            border-radius: 6px;
+            padding: 0.75rem 1rem;
+            cursor: pointer;
+        }
+
+        .button:hover {
+            background: #e0efff;
+            border-color: #b3d1ff;
+            color: #2d3748;
+        }
+
+        .button.primary {
+            background: #4299e1;
+            color: white;
+            border-color: #4299e1;
+        }
+
+        .button.primary:hover {
+            background: #3182ce;
+            border-color: #3182ce;
+        }
+
+        #gantt-chart {
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            background: var(--surface-color);
+            overflow: auto;
+        }
+
+        .gantt-bar {
+            cursor: pointer;
+        }
+
+        .gantt-bar:hover {
+            opacity: 0.8;
+        }
+
+        .axis {
+            color: var(--text-primary);
+        }
+
+        .axis text {
+            fill: var(--text-primary);
+        }
+
+        .axis path,
+        .axis line {
+            stroke: var(--border-color);
+        }
+
+        .grid line {
+            stroke: var(--border-color);
+            stroke-dasharray: 3,3;
+            opacity: 0.5;
+        }
+
+        .task-text {
+            font-size: 12px;
+            fill: white;
+            font-weight: 500;
+        }
+
+        .data-editor {
+            margin-top: 1rem;
+        }
+
+        .data-editor textarea {
+            width: 100%;
+            height: 200px;
+            font-family: 'Monaco', 'Consolas', monospace;
+            font-size: 0.9rem;
+        }
+
+        .presets {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .preset-btn {
+            padding: 0.5rem 1rem;
+            font-size: 0.8rem;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            .task-text {
+                fill: #f8f9fa;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="playground">
+            <h1 class="text-center">🎯 D3 Gantt Chart Playground</h1>
+            <p class="text-center" style="color: var(--text-secondary);">Interactive playground for creating and customizing D3.js Gantt charts</p>
+            
+            <!-- Controls -->
+            <div class="controls">
+                <div class="control-group">
+                    <label>Chart Width</label>
+                    <input type="range" id="chartWidth" min="600" max="1200" value="900">
+                    <span id="widthValue">900px</span>
+                </div>
+                
+                <div class="control-group">
+                    <label>Chart Height</label>
+                    <input type="range" id="chartHeight" min="300" max="800" value="400">
+                    <span id="heightValue">400px</span>
+                </div>
+                
+                <div class="control-group">
+                    <label>Bar Height</label>
+                    <input type="range" id="barHeight" min="15" max="50" value="25">
+                    <span id="barHeightValue">25px</span>
+                </div>
+                
+                <div class="control-group">
+                    <label>Bar Padding</label>
+                    <input type="range" id="barPadding" min="2" max="20" value="5">
+                    <span id="barPaddingValue">5px</span>
+                </div>
+                
+                <div class="control-group">
+                    <label>Color Scheme</label>
+                    <select id="colorScheme">
+                        <option value="category10">Category10</option>
+                        <option value="set3">Set3</option>
+                        <option value="pastel1">Pastel1</option>
+                        <option value="dark2">Dark2</option>
+                        <option value="accent">Accent</option>
+                        <option value="custom">Custom Blue</option>
+                    </select>
+                </div>
+                
+                <div class="control-group">
+                    <label>Time Format</label>
+                    <select id="timeFormat">
+                        <option value="%m/%d">MM/DD</option>
+                        <option value="%m/%d/%Y">MM/DD/YYYY</option>
+                        <option value="%b %d">Mon DD</option>
+                        <option value="%b %d, %Y">Mon DD, YYYY</option>
+                        <option value="%Y-%m-%d">YYYY-MM-DD</option>
+                        <option value="%a %m/%d">Day MM/DD</option>
+                        <option value="%a %b %d">Day Mon DD</option>
+                        <option value="%m/%d %H:%M">MM/DD HH:MM</option>
+                        <option value="%b %d %H:%M">Mon DD HH:MM</option>
+                    </select>
+                </div>
+                
+                <div class="control-group">
+                    <label>Show Grid</label>
+                    <input type="checkbox" id="showGrid" checked>
+                </div>
+                
+                <div class="control-group">
+                    <label>Show Task Labels</label>
+                    <input type="checkbox" id="showLabels" checked>
+                </div>
+                
+                <div class="control-group">
+                    <label>Show Y-Axis Labels</label>
+                    <input type="checkbox" id="showYAxis" checked>
+                </div>
+                
+                <div class="control-group">
+                    <label>Sort Tasks</label>
+                    <select id="sortTasks">
+                        <option value="none">No Sorting</option>
+                        <option value="start">By Start Date</option>
+                        <option value="end">By End Date</option>
+                        <option value="duration">By Duration</option>
+                        <option value="name">By Task Name</option>
+                    </select>
+                </div>
+                
+                <div class="control-group">
+                    <label>Animation Duration</label>
+                    <input type="range" id="animationDuration" min="0" max="2000" value="750">
+                    <span id="animationValue">750ms</span>
+                </div>
+            </div>
+            
+            <!-- Action Buttons -->
+            <div class="text-center" style="margin-bottom: 2rem;">
+                <button class="button primary" onclick="updateChart()">Update Chart</button>
+                <button class="button" onclick="exportSVG()">Export SVG</button>
+                <button class="button" onclick="exportPNG()">Export PNG</button>
+                <button class="button" onclick="randomizeData()">Randomize Data</button>
+                <button class="button" onclick="shareURL()">📋 Share URL</button>
+            </div>
+            
+            <!-- Chart Container -->
+            <div id="gantt-chart"></div>
+            
+            <!-- Data Editor -->
+            <div class="data-editor">
+                <h3>📝 Edit Task Data</h3>
+                <div class="presets">
+                    <button class="button preset-btn" onclick="loadPreset('project')">Project Timeline</button>
+                    <button class="button preset-btn" onclick="loadPreset('software')">Software Development</button>
+                    <button class="button preset-btn" onclick="loadPreset('construction')">Construction</button>
+                    <button class="button preset-btn" onclick="loadPreset('simple')">Simple Tasks</button>
+                    <button class="button preset-btn" onclick="loadPreset('shortTasks')">3-Day Tasks</button>
+                    <button class="button preset-btn" onclick="loadPreset('dailyTasks')">Daily Schedule</button>
+                </div>
+                <textarea id="taskData" placeholder="Edit JSON task data here..."></textarea>
+                <button class="button" onclick="updateFromJSON()" style="margin-top: 1rem;">Update from JSON</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Global variables
+        let chartData = [];
+        let chart, svg, xScale, yScale, colorScale;
+        
+        // Default task data
+        const defaultTasks = [
+            {
+                id: 1,
+                task: "Project Planning",
+                start: "2024-01-01",
+                end: "2024-01-15",
+                category: "Planning",
+                progress: 100
+            },
+            {
+                id: 2,
+                task: "Requirements Analysis",
+                start: "2024-01-10",
+                end: "2024-01-30",
+                category: "Analysis",
+                progress: 80
+            },
+            {
+                id: 3,
+                task: "System Design",
+                start: "2024-01-25",
+                end: "2024-02-20",
+                category: "Design",
+                progress: 60
+            },
+            {
+                id: 4,
+                task: "Frontend Development",
+                start: "2024-02-15",
+                end: "2024-03-30",
+                category: "Development",
+                progress: 40
+            },
+            {
+                id: 5,
+                task: "Backend Development",
+                start: "2024-02-20",
+                end: "2024-04-10",
+                category: "Development",
+                progress: 30
+            },
+            {
+                id: 6,
+                task: "Testing & QA",
+                start: "2024-03-25",
+                end: "2024-04-25",
+                category: "Testing",
+                progress: 10
+            },
+            {
+                id: 7,
+                task: "Deployment",
+                start: "2024-04-20",
+                end: "2024-05-05",
+                category: "Deployment",
+                progress: 0
+            }
+        ];
+        
+        // Presets
+        const presets = {
+            project: [
+                {id: 1, task: "Project Kickoff", start: "2024-01-01", end: "2024-01-07", category: "Planning", progress: 100},
+                {id: 2, task: "Research Phase", start: "2024-01-08", end: "2024-01-28", category: "Research", progress: 75},
+                {id: 3, task: "Design Phase", start: "2024-01-22", end: "2024-02-18", category: "Design", progress: 50},
+                {id: 4, task: "Development", start: "2024-02-12", end: "2024-04-01", category: "Development", progress: 25},
+                {id: 5, task: "Testing", start: "2024-03-25", end: "2024-04-15", category: "Testing", progress: 10},
+                {id: 6, task: "Launch", start: "2024-04-08", end: "2024-04-22", category: "Launch", progress: 0}
+            ],
+            software: [
+                {id: 1, task: "Sprint 1: Auth System", start: "2024-01-01", end: "2024-01-14", category: "Backend", progress: 100},
+                {id: 2, task: "Sprint 2: User Dashboard", start: "2024-01-15", end: "2024-01-28", category: "Frontend", progress: 80},
+                {id: 3, task: "Sprint 3: API Integration", start: "2024-01-29", end: "2024-02-11", category: "Backend", progress: 60},
+                {id: 4, task: "Sprint 4: Mobile App", start: "2024-02-12", end: "2024-02-25", category: "Mobile", progress: 30},
+                {id: 5, task: "Code Review & Refactor", start: "2024-02-20", end: "2024-03-05", category: "QA", progress: 0},
+                {id: 6, task: "Production Deploy", start: "2024-03-01", end: "2024-03-08", category: "DevOps", progress: 0}
+            ],
+            construction: [
+                {id: 1, task: "Site Preparation", start: "2024-01-01", end: "2024-01-21", category: "Site Work", progress: 90},
+                {id: 2, task: "Foundation", start: "2024-01-15", end: "2024-02-10", category: "Structure", progress: 70},
+                {id: 3, task: "Framing", start: "2024-02-05", end: "2024-03-01", category: "Structure", progress: 40},
+                {id: 4, task: "Electrical Rough-in", start: "2024-02-20", end: "2024-03-15", category: "MEP", progress: 20},
+                {id: 5, task: "Plumbing Rough-in", start: "2024-02-25", end: "2024-03-20", category: "MEP", progress: 15},
+                {id: 6, task: "Drywall", start: "2024-03-10", end: "2024-04-05", category: "Finishes", progress: 0},
+                {id: 7, task: "Final Inspection", start: "2024-04-20", end: "2024-04-25", category: "Closeout", progress: 0}
+            ],
+            simple: [
+                {id: 1, task: "Task A", start: "2024-01-01", end: "2024-01-10", category: "Phase 1", progress: 100},
+                {id: 2, task: "Task B", start: "2024-01-05", end: "2024-01-20", category: "Phase 1", progress: 60},
+                {id: 3, task: "Task C", start: "2024-01-15", end: "2024-02-01", category: "Phase 2", progress: 30},
+                {id: 4, task: "Task D", start: "2024-01-25", end: "2024-02-15", category: "Phase 2", progress: 0}
+            ],
+            shortTasks: [
+                {id: 1, task: "Setup Environment", start: "2024-01-01T09:00", end: "2024-01-03T17:00", category: "Setup", progress: 100},
+                {id: 2, task: "Code Review", start: "2024-01-02T10:00", end: "2024-01-04T16:00", category: "Review", progress: 75},
+                {id: 3, task: "Bug Fixes", start: "2024-01-04T09:00", end: "2024-01-06T15:00", category: "Development", progress: 50},
+                {id: 4, task: "Testing Phase", start: "2024-01-05T14:00", end: "2024-01-08T12:00", category: "Testing", progress: 25},
+                {id: 5, task: "Documentation", start: "2024-01-07T10:00", end: "2024-01-09T18:00", category: "Docs", progress: 0}
+            ],
+            dailyTasks: [
+                {id: 1, task: "Morning Standup", start: "2024-01-01T09:00", end: "2024-01-01T09:30", category: "Meeting", progress: 100},
+                {id: 2, task: "Feature Development", start: "2024-01-01T10:00", end: "2024-01-03T16:00", category: "Dev", progress: 80},
+                {id: 3, task: "Client Call", start: "2024-01-02T14:00", end: "2024-01-02T15:00", category: "Meeting", progress: 100},
+                {id: 4, task: "Code Testing", start: "2024-01-03T11:00", end: "2024-01-04T17:00", category: "QA", progress: 60},
+                {id: 5, task: "Deploy to Staging", start: "2024-01-04T15:00", end: "2024-01-04T18:00", category: "Deploy", progress: 30}
+            ]
+        };
+        
+        // Initialize
+        function init() {
+            // Try to load from URL first, otherwise use default tasks
+            if (!loadFromURL()) {
+                chartData = [...defaultTasks];
+            }
+            updateTaskDataEditor();
+            setupEventListeners();
+            updateChart();
+        }
+        
+        // Setup event listeners
+        function setupEventListeners() {
+            const controls = ['chartWidth', 'chartHeight', 'barHeight', 'barPadding', 'animationDuration'];
+            controls.forEach(id => {
+                const element = document.getElementById(id);
+                const valueSpan = document.getElementById(id.replace('chart', '').replace('bar', '').replace('animation', 'animation').toLowerCase() + 'Value') || 
+                                document.getElementById(id.replace('Chart', '') + 'Value') ||
+                                document.getElementById(id.replace('bar', 'bar') + 'Value') ||
+                                document.getElementById('animationValue');
+                
+                element.addEventListener('input', (e) => {
+                    const suffix = id.includes('Duration') ? 'ms' : 'px';
+                    if (valueSpan) valueSpan.textContent = e.target.value + suffix;
+                });
+            });
+        }
+        
+        // Color schemes
+        function getColorScale(scheme, categories) {
+            switch(scheme) {
+                case 'category10':
+                    return d3.scaleOrdinal(d3.schemeCategory10);
+                case 'set3':
+                    return d3.scaleOrdinal(d3.schemeSet3);
+                case 'pastel1':
+                    return d3.scaleOrdinal(d3.schemePastel1);
+                case 'dark2':
+                    return d3.scaleOrdinal(d3.schemeDark2);
+                case 'accent':
+                    return d3.scaleOrdinal(d3.schemeAccent);
+                case 'custom':
+                    const blueShades = ['#e3f2fd', '#bbdefb', '#90caf9', '#64b5f6', '#42a5f5', '#2196f3', '#1e88e5', '#1976d2'];
+                    return d3.scaleOrdinal(blueShades);
+                default:
+                    return d3.scaleOrdinal(d3.schemeCategory10);
+            }
+        }
+        
+        // Sort tasks
+        function sortTasks(tasks, sortBy) {
+            if (sortBy === 'none') return tasks;
+            
+            return [...tasks].sort((a, b) => {
+                switch(sortBy) {
+                    case 'start':
+                        return new Date(a.start) - new Date(b.start);
+                    case 'end':
+                        return new Date(a.end) - new Date(b.end);
+                    case 'duration':
+                        const durationA = new Date(a.end) - new Date(a.start);
+                        const durationB = new Date(b.end) - new Date(b.start);
+                        return durationB - durationA;
+                    case 'name':
+                        return a.task.localeCompare(b.task);
+                    default:
+                        return 0;
+                }
+            });
+        }
+        
+        // Main chart update function
+        function updateChart() {
+            // Get control values
+            const width = parseInt(document.getElementById('chartWidth').value);
+            const height = parseInt(document.getElementById('chartHeight').value);
+            const barHeight = parseInt(document.getElementById('barHeight').value);
+            const barPadding = parseInt(document.getElementById('barPadding').value);
+            const colorScheme = document.getElementById('colorScheme').value;
+            const timeFormat = document.getElementById('timeFormat').value;
+            const showGrid = document.getElementById('showGrid').checked;
+            const showLabels = document.getElementById('showLabels').checked;
+            const showYAxis = document.getElementById('showYAxis').checked;
+            const sortBy = document.getElementById('sortTasks').value;
+            const animationDuration = parseInt(document.getElementById('animationDuration').value);
+            
+            // Sort tasks
+            const sortedTasks = sortTasks(chartData, sortBy);
+            
+            // Clear previous chart
+            d3.select('#gantt-chart').selectAll('*').remove();
+            
+            // Margins
+            const margin = {
+                top: 40, 
+                right: 40, 
+                bottom: 80, 
+                left: showYAxis ? 150 : 20
+            };
+            const innerWidth = width - margin.left - margin.right;
+            const innerHeight = height - margin.top - margin.bottom;
+            
+            // Create SVG
+            svg = d3.select('#gantt-chart')
+                .append('svg')
+                .attr('width', width)
+                .attr('height', height);
+            
+            const g = svg.append('g')
+                .attr('transform', `translate(${margin.left},${margin.top})`);
+            
+            // Parse dates and get extent
+            sortedTasks.forEach(d => {
+                d.startDate = new Date(d.start);
+                d.endDate = new Date(d.end);
+            });
+            
+            const dateExtent = d3.extent(sortedTasks.flatMap(d => [d.startDate, d.endDate]));
+            
+            // Create scales
+            xScale = d3.scaleTime()
+                .domain(dateExtent)
+                .range([0, innerWidth]);
+            
+            yScale = d3.scaleBand()
+                .domain(sortedTasks.map(d => d.task))
+                .range([0, innerHeight])
+                .padding(barPadding / 100);
+            
+            // Color scale
+            const categories = [...new Set(sortedTasks.map(d => d.category))];
+            colorScale = getColorScale(colorScheme, categories);
+            
+            // Add grid
+            if (showGrid) {
+                const xAxis = d3.axisBottom(xScale)
+                    .tickSize(-innerHeight)
+                    .tickFormat('');
+                
+                g.append('g')
+                    .attr('class', 'grid')
+                    .attr('transform', `translate(0,${innerHeight})`)
+                    .call(xAxis);
+            }
+            
+            // Create bars
+            const bars = g.selectAll('.gantt-bar')
+                .data(sortedTasks)
+                .enter()
+                .append('g')
+                .attr('class', 'gantt-bar');
+            
+            // Background bars (full duration)
+            bars.append('rect')
+                .attr('x', d => xScale(d.startDate))
+                .attr('y', d => yScale(d.task))
+                .attr('width', 0)
+                .attr('height', yScale.bandwidth())
+                .attr('fill', d => colorScale(d.category))
+                .attr('opacity', 0.3)
+                .attr('rx', 3)
+                .transition()
+                .duration(animationDuration)
+                .attr('width', d => xScale(d.endDate) - xScale(d.startDate));
+            
+            // Progress bars
+            bars.append('rect')
+                .attr('x', d => xScale(d.startDate))
+                .attr('y', d => yScale(d.task))
+                .attr('width', 0)
+                .attr('height', yScale.bandwidth())
+                .attr('fill', d => colorScale(d.category))
+                .attr('rx', 3)
+                .transition()
+                .duration(animationDuration)
+                .attr('width', d => (xScale(d.endDate) - xScale(d.startDate)) * (d.progress / 100));
+            
+            // Add labels
+            if (showLabels) {
+                bars.append('text')
+                    .attr('class', 'task-text')
+                    .attr('x', d => xScale(d.startDate) + 5)
+                    .attr('y', d => yScale(d.task) + yScale.bandwidth() / 2)
+                    .attr('dy', '0.35em')
+                    .text(d => `${d.task} (${d.progress}%)`)
+                    .attr('opacity', 0)
+                    .transition()
+                    .duration(animationDuration)
+                    .attr('opacity', 1);
+            }
+            
+            // Add axes
+            const xAxis = d3.axisBottom(xScale)
+                .tickFormat(d3.timeFormat(timeFormat));
+            
+            const yAxis = d3.axisLeft(yScale);
+            
+            g.append('g')
+                .attr('class', 'axis')
+                .attr('transform', `translate(0,${innerHeight})`)
+                .call(xAxis)
+                .selectAll('text')
+                .style('text-anchor', 'end')
+                .attr('dx', '-.8em')
+                .attr('dy', '.15em')
+                .attr('transform', 'rotate(-45)');
+            
+            if (showYAxis) {
+                g.append('g')
+                    .attr('class', 'axis')
+                    .call(yAxis);
+            }
+            
+            // Add title
+            svg.append('text')
+                .attr('x', width / 2)
+                .attr('y', 25)
+                .attr('text-anchor', 'middle')
+                .style('font-size', '16px')
+                .style('font-weight', 'bold')
+                .style('fill', 'var(--text-primary)')
+                .text('Project Timeline Gantt Chart');
+            
+            // Add tooltips
+            bars.append('title')
+                .text(d => `${d.task}\nStart: ${d.start}\nEnd: ${d.end}\nProgress: ${d.progress}%\nCategory: ${d.category}`);
+        }
+        
+        // Load preset data
+        function loadPreset(preset) {
+            chartData = [...presets[preset]];
+            updateTaskDataEditor();
+            updateChart();
+            updateURL();
+        }
+        
+        // Update task data editor
+        function updateTaskDataEditor() {
+            document.getElementById('taskData').value = JSON.stringify(chartData, null, 2);
+        }
+        
+        // Update from JSON
+        function updateFromJSON() {
+            try {
+                const newData = JSON.parse(document.getElementById('taskData').value);
+                if (Array.isArray(newData) && newData.length > 0) {
+                    chartData = newData;
+                    updateChart();
+                    updateURL();
+                } else {
+                    alert('Invalid JSON data. Must be an array of task objects.');
+                }
+            } catch (error) {
+                alert('Invalid JSON format: ' + error.message);
+            }
+        }
+        
+        // Update URL with current data
+        function updateURL() {
+            const encodedData = btoa(JSON.stringify(chartData));
+            const url = new URL(window.location);
+            url.searchParams.set('data', encodedData);
+            window.history.replaceState({}, '', url);
+        }
+        
+        // Load data from URL
+        function loadFromURL() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const encodedData = urlParams.get('data');
+            
+            if (encodedData) {
+                try {
+                    const decodedData = JSON.parse(atob(encodedData));
+                    if (Array.isArray(decodedData) && decodedData.length > 0) {
+                        chartData = decodedData;
+                        updateTaskDataEditor();
+                        return true;
+                    }
+                } catch (error) {
+                    console.warn('Failed to load data from URL:', error);
+                }
+            }
+            return false;
+        }
+        
+        // Randomize data
+        function randomizeData() {
+            const tasks = ['Design', 'Development', 'Testing', 'Deployment', 'Marketing', 'Research'];
+            const categories = ['Planning', 'Development', 'Testing', 'Launch'];
+            
+            chartData = tasks.map((task, i) => {
+                const startDate = new Date(2024, 0, 1 + i * 10 + Math.random() * 20);
+                const endDate = new Date(startDate.getTime() + (Math.random() * 30 + 10) * 24 * 60 * 60 * 1000);
+                
+                return {
+                    id: i + 1,
+                    task: task,
+                    start: startDate.toISOString().split('T')[0],
+                    end: endDate.toISOString().split('T')[0],
+                    category: categories[Math.floor(Math.random() * categories.length)],
+                    progress: Math.floor(Math.random() * 100)
+                };
+            });
+            
+            updateTaskDataEditor();
+            updateChart();
+            updateURL();
+        }
+        
+        // Export functions
+        function exportSVG() {
+            const svgElement = document.querySelector('#gantt-chart svg');
+            const serializer = new XMLSerializer();
+            const svgString = serializer.serializeToString(svgElement);
+            const blob = new Blob([svgString], {type: 'image/svg+xml'});
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'gantt-chart.svg';
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+        
+        function exportPNG() {
+            const svgElement = document.querySelector('#gantt-chart svg');
+            const svgData = new XMLSerializer().serializeToString(svgElement);
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+            const img = new Image();
+            
+            canvas.width = svgElement.width.baseVal.value;
+            canvas.height = svgElement.height.baseVal.value;
+            
+            img.onload = function() {
+                ctx.drawImage(img, 0, 0);
+                const a = document.createElement('a');
+                a.href = canvas.toDataURL('image/png');
+                a.download = 'gantt-chart.png';
+                a.click();
+            };
+            
+            img.src = 'data:image/svg+xml;base64,' + btoa(svgData);
+        }
+        
+        // Share URL function
+        function shareURL() {
+            updateURL();
+            const url = window.location.href;
+            
+            if (navigator.clipboard) {
+                navigator.clipboard.writeText(url).then(() => {
+                    alert('URL copied to clipboard! You can now share this link to share your Gantt chart configuration.');
+                }).catch(() => {
+                    promptForCopy(url);
+                });
+            } else {
+                promptForCopy(url);
+            }
+        }
+        
+        function promptForCopy(url) {
+            const textArea = document.createElement('textarea');
+            textArea.value = url;
+            document.body.appendChild(textArea);
+            textArea.select();
+            document.execCommand('copy');
+            document.body.removeChild(textArea);
+            alert('URL has been selected and copied! You can now share this link to share your Gantt chart configuration.');
+        }
+        
+        // Initialize on load
+        window.addEventListener('load', init);
+    </script>
+</body>
+</html>
