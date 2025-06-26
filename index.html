@@ -10,47 +10,50 @@
     
     <style>
         :root {
-            --bg-color: #667eea;
-            --bg-secondary-color: #764ba2;
-            --color-primary: #667eea;
+            --bg-color: #f8f9fa;
+            --bg-secondary-color: #e9ecef;
+            --color-primary: #007bff;
             --color-lightGrey: #f7fafc;
             --color-grey: #e2e8f0;
             --color-darkGrey: #4a5568;
-            --color-error: #f56565;
-            --color-success: #48bb78;
+            --color-error: #dc3545;
+            --color-success: #28a745;
             --grid-maxWidth: 1200px;
             
             /* Light mode colors */
             --surface-color: #ffffff;
-            --surface-secondary: #f7fafc;
-            --surface-tertiary: #e2e8f0;
-            --text-primary: #2d3748;
-            --text-secondary: #4a5568;
-            --text-tertiary: #718096;
-            --border-color: #e2e8f0;
-            --shadow-color: rgba(0, 0, 0, 0.1);
+            --surface-secondary: #f8f9fa;
+            --surface-tertiary: #e9ecef;
+            --text-primary: #212529;
+            --text-secondary: #495057;
+            --text-tertiary: #6c757d;
+            --border-color: #dee2e6;
+            --shadow-color: rgba(0, 0, 0, 0.15);
             --nav-bg: rgba(255, 255, 255, 0.95);
             --nav-shadow: rgba(0, 0, 0, 0.1);
         }
         
         @media (prefers-color-scheme: dark) {
             :root {
-                --color-lightGrey: #2d3748;
-                --color-grey: #4a5568;
-                --color-darkGrey: #e2e8f0;
-                --color-error: #fc8181;
-                --color-success: #68d391;
+                --bg-color: #343a40;
+                --bg-secondary-color: #495057;
+                --color-primary: #0d6efd;
+                --color-lightGrey: #495057;
+                --color-grey: #6c757d;
+                --color-darkGrey: #adb5bd;
+                --color-error: #dc3545;
+                --color-success: #198754;
                 
                 /* Dark mode colors */
-                --surface-color: #1a202c;
-                --surface-secondary: #2d3748;
-                --surface-tertiary: #4a5568;
-                --text-primary: #f7fafc;
-                --text-secondary: #e2e8f0;
-                --text-tertiary: #a0aec0;
-                --border-color: #4a5568;
-                --shadow-color: rgba(0, 0, 0, 0.3);
-                --nav-bg: rgba(26, 32, 44, 0.95);
+                --surface-color: #212529;
+                --surface-secondary: #343a40;
+                --surface-tertiary: #495057;
+                --text-primary: #f8f9fa;
+                --text-secondary: #e9ecef;
+                --text-tertiary: #adb5bd;
+                --border-color: #495057;
+                --shadow-color: rgba(0, 0, 0, 0.5);
+                --nav-bg: rgba(33, 37, 41, 0.95);
                 --nav-shadow: rgba(0, 0, 0, 0.3);
             }
         }
@@ -129,8 +132,9 @@
         }
 
         .nav-link:hover, .nav-link.active {
-            background: var(--color-primary);
-            color: white;
+            background: rgba(0, 123, 255, 0.1);
+            color: #0066cc;
+            border: 1px solid rgba(0, 123, 255, 0.2);
         }
 
         /* Mobile Responsive */
@@ -187,18 +191,34 @@
             display: block;
         }
 
-        /* Custom Button Styles */
-        .button.primary, .btn-custom {
-            background: linear-gradient(135deg, var(--color-primary) 0%, var(--bg-secondary-color) 100%);
-            border: none;
-            color: white;
-            font-weight: 600;
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        /* Unified Button Styles */
+        .button, button, .btn-custom {
+            background: #f0f6ff;
+            border: 1px solid #d1e2ff;
+            color: #4a5568;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            border-radius: 6px;
+            padding: 0.75rem 1rem;
         }
 
-        .button.primary:hover, .btn-custom:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+        .button:hover, button:hover, .btn-custom:hover {
+            background: #e0efff;
+            border-color: #b3d1ff;
+            color: #2d3748;
+            transform: translateY(-1px);
+            box-shadow: 0 2px 4px var(--shadow-color);
+        }
+
+        .button.primary {
+            background: var(--text-secondary);
+            color: white;
+            border-color: var(--text-secondary);
+        }
+
+        .button.primary:hover {
+            background: var(--text-primary);
+            border-color: var(--text-primary);
         }
 
         /* Result and Error Styles */
@@ -401,23 +421,40 @@
             color: var(--text-tertiary);
         }
         
-        /* Chota Framework Dark Mode Overrides */
+        /* Dark Mode Overrides */
         @media (prefers-color-scheme: dark) {
-            /* Override Chota's default styles for dark mode */
-            .button, button {
-                color: white;
+            /* Navigation links in dark mode */
+            .nav-link:hover, .nav-link.active {
+                background: rgba(100, 149, 237, 0.15);
+                color: #6495ed;
+                border: 1px solid rgba(100, 149, 237, 0.3);
             }
             
-            .button.outline {
-                color: var(--text-primary);
-                border-color: var(--border-color);
+            /* Button consistency in dark mode */
+            .button, button, .btn-custom {
+                background: #2a3441;
+                color: #e2e8f0;
+                border-color: #4a5568;
             }
             
-            .button.outline:hover {
-                background: var(--color-primary);
-                color: white;
+            .button:hover, button:hover, .btn-custom:hover {
+                background: #374151;
+                color: #f7fafc;
+                border-color: #6b7280;
             }
             
+            .button.primary {
+                background: var(--text-tertiary);
+                color: var(--surface-color);
+                border-color: var(--text-tertiary);
+            }
+            
+            .button.primary:hover {
+                background: var(--text-secondary);
+                border-color: var(--text-secondary);
+            }
+            
+            /* Text color overrides */
             h1, h2, h3, h4, h5, h6 {
                 color: var(--text-primary);
             }
@@ -426,7 +463,6 @@
                 color: var(--text-primary);
             }
             
-            /* Dark mode text utilities */
             .text-center {
                 color: var(--text-primary);
             }
@@ -503,7 +539,7 @@
                         </div>
                     </div>
                     
-                    <button class="button primary" onclick="predict()">Predict Missing Parameter</button>
+                    <button class="button btn-custom" onclick="predict()">Predict Missing Parameter</button>
                     
                     <div class="result-box" id="result">
                         <h3>Prediction Result</h3>
@@ -543,13 +579,13 @@
 
                     <div class="row">
                         <div class="col-4">
-                            <button class="button outline btn-custom" onclick="testCurrentModel()">Test Current Model</button>
+                            <button class="button btn-custom" onclick="testCurrentModel()">Test Current Model</button>
                         </div>
                         <div class="col-4">
-                            <button class="button outline btn-custom" onclick="optimizeModel()">Optimize Parameters</button>
+                            <button class="button btn-custom" onclick="optimizeModel()">Optimize Parameters</button>
                         </div>
                         <div class="col-4">
-                            <button class="button outline btn-custom" onclick="testAlternativeModels()">Test Alternative Models</button>
+                            <button class="button btn-custom" onclick="testAlternativeModels()">Test Alternative Models</button>
                         </div>
                     </div>
                     
@@ -570,13 +606,13 @@
                     
                     <div class="row">
                         <div class="col-4">
-                            <button class="button outline btn-custom" onclick="testAllModels()">🧪 Test All Models</button>
+                            <button class="button btn-custom" onclick="testAllModels()">🧪 Test All Models</button>
                         </div>
                         <div class="col-4">
-                            <button class="button outline btn-custom" onclick="findBestParameters()">🎯 Optimize Best Model</button>
+                            <button class="button btn-custom" onclick="findBestParameters()">🎯 Optimize Best Model</button>
                         </div>
                         <div class="col-4">
-                            <button class="button outline btn-custom" onclick="showDetailedAnalysis()">📊 Detailed Analysis</button>
+                            <button class="button btn-custom" onclick="showDetailedAnalysis()">📊 Detailed Analysis</button>
                         </div>
                     </div>
                     
