@@ -1,17 +1,13 @@
 import { defineConfig } from 'vite'
+import preact from '@preact/preset-vite'
 
 export default defineConfig({
+  plugins: [preact()],
   root: 'src',
   base: './',
   build: {
     outDir: '../dist',
-    emptyOutDir: true,
-    rollupOptions: {
-      input: {
-        main: 'index.html',
-        gantt: 'gantt.html'
-      }
-    }
+    emptyOutDir: true
   },
   server: {
     open: true,

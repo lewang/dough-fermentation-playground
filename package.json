@@ -20,7 +20,11 @@
   },
   "homepage": "https://github.com/lewang/dough-fermentation-playground#readme",
   "description": "",
+  "dependencies": {
+    "preact": "^10.19.0"
+  },
   "devDependencies": {
-    "vite": "^7.0.0"
+    "vite": "^7.0.0",
+    "@preact/preset-vite": "^2.7.0"
   }
 }
