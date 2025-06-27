@@ -1,0 +1,42 @@
+body {
+    background: linear-gradient(135deg, var(--bg-color) 0%, var(--bg-secondary-color) 100%);
+    min-height: 100vh;
+    margin: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Main Content */
+.main-content {
+    padding: 2rem 0;
+}
+
+.content-container {
+    background: var(--surface-color);
+    border-radius: 15px;
+    padding: 2rem;
+    box-shadow: 0 10px 30px var(--shadow-color);
+    margin: 0 auto;
+    max-width: var(--grid-maxWidth);
+    color: var(--text-primary);
+}
+
+.tab-content {
+    display: none;
+}
+
+.tab-content.active {
+    display: block;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .content-container {
+        margin: 1rem;
+        padding: 1rem;
+    }
+}

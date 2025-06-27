@@ -1,0 +1,210 @@
+/* Unified Button Styles */
+.button, button, .btn-custom {
+    background: #f0f6ff;
+    border: 1px solid #d1e2ff;
+    color: #4a5568;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    border-radius: 6px;
+    padding: 0.75rem 1rem;
+}
+
+.button:hover, button:hover, .btn-custom:hover {
+    background: #e0efff;
+    border-color: #b3d1ff;
+    color: #2d3748;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px var(--shadow-color);
+}
+
+.button.primary {
+    background: var(--text-secondary);
+    color: white;
+    border-color: var(--text-secondary);
+}
+
+.button.primary:hover {
+    background: var(--text-primary);
+    border-color: var(--text-primary);
+}
+
+/* Result and Error Styles */
+.result-box {
+    background: var(--surface-secondary);
+    border: 2px solid var(--color-success);
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin-top: 2rem;
+    display: none;
+    color: var(--text-primary);
+}
+
+.result-box.show {
+    display: block;
+    animation: fadeIn 0.5s ease;
+}
+
+.error-box {
+    background: var(--surface-secondary);
+    border: 2px solid var(--color-error);
+    color: var(--color-error);
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin-top: 2rem;
+    display: none;
+}
+
+.error-box.show {
+    display: block;
+}
+
+.result-value {
+    font-size: 2rem;
+    font-weight: bold;
+    color: var(--color-success);
+    margin: 1rem 0;
+}
+
+/* Model Testing Styles */
+.model-test { 
+    margin: 1.5rem 0; 
+    padding: 1.5rem; 
+    border: 1px solid var(--border-color); 
+    border-radius: 8px;
+    background: var(--surface-secondary);
+    color: var(--text-primary);
+}
+
+.model-test.good { 
+    border-color: var(--color-success); 
+    background: var(--surface-secondary);
+}
+
+.model-test.bad { 
+    border-color: var(--color-error); 
+    background: var(--surface-secondary);
+}
+
+.model-test.medium { 
+    border-color: #ed8936; 
+    background: var(--surface-secondary);
+}
+
+/* Advanced Models Styles */
+.model-result { 
+    margin: 1rem 0; 
+    padding: 1.5rem; 
+    border: 1px solid var(--border-color); 
+    border-radius: 8px; 
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+    background: var(--surface-secondary);
+    color: var(--text-primary);
+}
+
+.model-result.excellent { 
+    border-color: var(--color-success); 
+}
+
+.model-result.good { 
+    border-color: var(--color-success); 
+}
+
+.model-result.fair { 
+    border-color: #ed8936; 
+}
+
+.model-result.poor { 
+    border-color: var(--color-error); 
+}
+
+.model-info { 
+    flex: 1; 
+    min-width: 300px;
+}
+
+.model-metrics { 
+    text-align: right;
+    font-weight: bold;
+    min-width: 200px;
+}
+
+.winner {
+    border: 3px solid var(--color-success);
+    background: var(--surface-secondary);
+    position: relative;
+}
+
+.winner::before {
+    content: "🏆 BEST MODEL";
+    position: absolute;
+    top: -10px;
+    right: 10px;
+    background: var(--color-success);
+    color: white;
+    padding: 0.3rem 0.8rem;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    font-weight: bold;
+}
+
+.equation-box {
+    background: var(--surface-tertiary);
+    padding: 1rem;
+    border-radius: 8px;
+    margin: 1rem 0;
+    font-family: 'Monaco', 'Consolas', monospace;
+    font-size: 0.9rem;
+    overflow-x: auto;
+    color: var(--text-primary);
+    border: 1px solid var(--border-color);
+}
+
+.parameters-box {
+    background: var(--surface-tertiary);
+    padding: 1rem;
+    border-radius: 8px;
+    margin: 1rem 0;
+    font-size: 0.9rem;
+    color: var(--text-primary);
+    border: 1px solid var(--border-color);
+}
+
+.note-box {
+    background: var(--surface-secondary);
+    border: 1px solid var(--border-color);
+    padding: 1rem;
+    border-radius: 8px;
+    margin-top: 1.5rem;
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+}
+
+/* Dark Mode Button Overrides */
+@media (prefers-color-scheme: dark) {
+    .button, button, .btn-custom {
+        background: #2a3441;
+        color: #e2e8f0;
+        border-color: #4a5568;
+    }
+    
+    .button:hover, button:hover, .btn-custom:hover {
+        background: #374151;
+        color: #f7fafc;
+        border-color: #6b7280;
+    }
+    
+    .button.primary {
+        background: var(--text-tertiary);
+        color: var(--surface-color);
+        border-color: var(--text-tertiary);
+    }
+    
+    .button.primary:hover {
+        background: var(--text-secondary);
+        border-color: var(--text-secondary);
+    }
+}
