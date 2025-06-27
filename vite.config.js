@@ -8,8 +8,8 @@ export default defineConfig({
     emptyOutDir: true,
     rollupOptions: {
       input: {
-        main: 'src/index.html',
-        gantt: 'src/gantt.html'
+        main: 'index.html',
+        gantt: 'gantt.html'
       }
     }
   },

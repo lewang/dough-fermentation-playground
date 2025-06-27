@@ -288,7 +288,7 @@
     color: var(--text-primary);
     font-size: 1.5rem;
     white-space: nowrap;
-    min-width: 120px;
+    min-width: 180px;
     margin: 0;
 }
 
