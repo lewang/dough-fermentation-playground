@@ -669,23 +669,27 @@
         .input-group.main-input label {
             margin-bottom: 0;
             white-space: nowrap;
-            width: 120px;
+            width: 150px;
             text-align: left;
             flex-shrink: 0;
+            font-size: 1.5rem;
+            font-weight: 500;
         }
 
         .input-group.main-input .unit {
             margin-left: 0.5rem;
             color: var(--text-tertiary);
-            font-size: 0.75rem;
+            font-size: 1.25rem;
             font-weight: 500;
             white-space: nowrap;
         }
 
         .input-group.main-input input,
         .input-group.main-input select {
-            width: 100px;
+            width: 140px;
             flex-shrink: 0;
+            font-size: 1.5rem;
+            padding: 0.75rem;
         }
 
         .input-group.main-input input[type="number"] {
@@ -780,17 +784,18 @@
             border-bottom: none;
         }
 
-        /* Modern addon item styling */
+        /* Single row addon item styling */
         .addon-item {
             display: flex;
-            flex-direction: column;
-            gap: 0.75rem;
+            align-items: center;
+            gap: 1rem;
             padding: 1rem;
             background: var(--surface-color);
             border-radius: 8px;
             margin-bottom: 1rem;
             border: 1px solid var(--border-color);
             transition: all 0.2s ease;
+            position: relative;
         }
 
         .addon-item:hover {
@@ -798,43 +803,36 @@
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
         }
 
-        /* Addon header with remove button in corner */
-        .addon-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            margin-bottom: 0.5rem;
-            position: relative;
-        }
-
-        .addon-header label {
-            font-weight: 600;
+        /* Addon label on the left */
+        .addon-item .addon-label {
+            font-weight: 500;
             color: var(--text-primary);
+            font-size: 1.5rem;
+            white-space: nowrap;
+            min-width: 120px;
             margin: 0;
-            padding-right: 20px;
         }
 
-        /* Tiny x button in top-right corner */
+        /* Tiny x button integrated in flex layout */
         .addon-item .remove-btn,
         .remove-btn {
             background: rgba(156, 163, 175, 0.08);
             color: #9ca3af;
             border: none;
             border-radius: 50%;
-            width: 14px;
-            height: 14px;
+            width: 21px;
+            height: 21px;
             padding: 0;
             cursor: pointer;
-            font-size: 9px;
+            font-size: 13px;
             font-weight: 300;
             transition: all 0.2s ease;
             display: flex;
             align-items: center;
             justify-content: center;
             line-height: 1;
-            position: absolute;
-            top: -2px;
-            right: -2px;
+            flex-shrink: 0;
+            margin-left: auto;
         }
 
         .addon-item .remove-btn:hover,
@@ -844,12 +842,42 @@
             transform: scale(1.1);
         }
 
-        /* Addon input rows */
+        /* Addon inputs in single row - responsive grid for consistent alignment */
         .addon-inputs {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-            gap: 0.75rem;
-            align-items: end;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            align-items: center;
+            flex: 1;
+            min-width: 0;
+        }
+
+        /* Addon input groups in single row */
+        .addon-inputs .input-group {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            flex-shrink: 0;
+        }
+
+        .addon-inputs .input-group label {
+            font-size: 1.5rem;
+            font-weight: 500;
+            white-space: nowrap;
+            margin-bottom: 0;
+            min-width: fit-content;
+        }
+
+        .addon-inputs .input-group input,
+        .addon-inputs .input-group select {
+            width: 100px;
+            font-size: 1.5rem;
+            padding: 0.75rem;
+        }
+
+        .addon-inputs .input-group .unit {
+            font-size: 1.25rem;
+            margin-left: 0.25rem;
         }
 
         .recipe-output {
@@ -977,6 +1005,29 @@
             .recipe-stats {
                 grid-template-columns: 1fr;
             }
+
+            /* Addon responsive design */
+            .addon-item {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 0.75rem;
+            }
+
+            .addon-item .addon-label {
+                min-width: unset;
+                text-align: center;
+            }
+
+            .addon-inputs {
+                display: flex;
+                flex-direction: column;
+                gap: 0.75rem;
+            }
+
+            .addon-item .remove-btn {
+                align-self: flex-end;
+                margin-left: 0;
+            }
         }
     </style>
 </head>
@@ -1028,8 +1079,8 @@
                             
                             <div class="input-row">
                                 <div class="input-group main-input">
-                                    <label for="hydration">Hydration</label>
-                                    <input type="number" id="hydration" value="72" min="1" max="200" step="0.1" onchange="updateRecipe()">
+                                    <label for="hydrationPercent">Hydration</label>
+                                    <input type="number" id="hydrationPercent" value="72" min="1" max="200" step="0.1" onchange="updateRecipe()">
                                     <span class="unit">baker%</span>
                                 </div>
                                 <div class="input-group main-input">
@@ -1089,26 +1140,7 @@
                         </div>
                     </section>
                     
-                    <!-- Section 2: TangZhong (Optional) -->
-                    <section class="recipe-section tangzhong" id="tangzhongSection" style="display: none;">
-                        <h2>🌾 TangZhong</h2>
-                        <div class="recipe-inputs">
-                            <div class="input-row">
-                                <div class="input-group main-input">
-                                    <label for="tangzhongFlour">TangZhong Flour:</label>
-                                    <input type="number" id="tangzhongFlour" min="0" onchange="updateRecipe()">
-                                    <span class="unit">g</span>
-                                </div>
-                                <div class="input-group main-input">
-                                    <label for="tangzhongHydration">TangZhong Hydration:</label>
-                                    <input type="number" id="tangzhongHydration" value="200" min="0" onchange="updateRecipe()">
-                                    <span class="unit">%</span>
-                                </div>
-                            </div>
-                        </div>
-                    </section>
-                    
-                    <!-- Section 3: Addons (Optional) -->
+                    <!-- Section 2: Addons (Optional) -->
                     <section class="recipe-section addons" id="addonsSection" style="display: none;">
                         <h2>✨ Add-ons</h2>
                         <div id="addonsList" class="recipe-inputs">
@@ -1116,7 +1148,7 @@
                         </div>
                     </section>
                     
-                    <!-- Section 4: Processes (Optional) -->
+                    <!-- Section 3: Processes (Optional) -->
                     <section class="recipe-section processes" id="processesSection" style="display: none;">
                         <h2>⏰ Processes</h2>
                         <div id="processesList" class="recipe-inputs">
@@ -1281,14 +1313,14 @@
                 'cake-yeast': 2.38
             },
             
-            calculateFlour: function(portions, portionWeight, hydration, wholeWheatFlour = 0) {
+            calculateFlour: function(portions, portionWeight, hydrationPercent, wholeWheatFlour = 0) {
                 const totalWeight = portions * portionWeight;
-                const flourWeight = totalWeight / (1 + hydration / 100);
+                const flourWeight = totalWeight / (1 + hydrationPercent / 100);
                 return Math.max(0, flourWeight - wholeWheatFlour);
             },
             
-            calculateWater: function(totalFlour, hydration) {
-                return totalFlour * (hydration / 100);
+            calculateWater: function(totalFlour, hydrationPercent) {
+                return totalFlour * (hydrationPercent / 100);
             },
             
             calculateSalt: function(totalFlour, saltPercent) {
@@ -1472,29 +1504,24 @@
             switch (addon.id) {
                 case 'tangzhong':
                     addonItem.innerHTML = `
-                        <div class="addon-header">
-                            <label>TangZhong</label>
-                            <button class="remove-btn" onclick="removeAddon('${addon.id}')" title="Remove">×</button>
-                        </div>
+                        <label class="addon-label">TangZhong</label>
                         <div class="addon-inputs">
                             <div class="input-group">
-                                <label>Flour (g):</label>
                                 <input type="number" min="0" step="0.1" onchange="updateRecipe()">
+                                <span class="unit">Flour (g)</span>
                             </div>
                             <div class="input-group">
-                                <label>Hydration (%):</label>
                                 <input type="number" min="0" step="0.1" value="200" onchange="updateRecipe()">
+                                <span class="unit">Hydration (% of tangzhong flour)</span>
                             </div>
                         </div>
+                        <button class="remove-btn" onclick="removeAddon('${addon.id}')" title="Remove">×</button>
                     `;
                     break;
                     
                 case 'whole-wheat-flour':
                     addonItem.innerHTML = `
-                        <div class="addon-header">
-                            <label>Whole Wheat Flour</label>
-                            <button class="remove-btn" onclick="removeAddon('${addon.id}')" title="Remove">×</button>
-                        </div>
+                        <label class="addon-label">Whole Wheat Flour</label>
                         <div class="addon-inputs">
                             <div class="input-group">
                                 <input type="number" min="0" step="0.1" onchange="updateRecipe()">
@@ -1506,42 +1533,40 @@
                                 </select>
                             </div>
                         </div>
+                        <button class="remove-btn" onclick="removeAddon('${addon.id}')" title="Remove">×</button>
                     `;
                     break;
                     
                 case 'cold-fermentation':
                 case 'room-temp-fermentation':
                     addonItem.innerHTML = `
-                        <div class="addon-header">
-                            <label>${addon.name}</label>
-                            <button class="remove-btn" onclick="removeAddon('${addon.id}')" title="Remove">×</button>
-                        </div>
+                        <label class="addon-label">${addon.name}</label>
                         <div class="addon-inputs">
                             <div class="input-group">
-                                <label>Temperature (°C):</label>
+                                <label>Temperature</label>
                                 <input type="number" min="0" max="50" step="0.1" onchange="updateRecipe()">
+                                <span class="unit">°C</span>
                             </div>
                             <div class="input-group">
-                                <label>Duration:</label>
+                                <label>Duration</label>
                                 <input type="text" placeholder="e.g., 12 hours, 2 days" onchange="validateDuration(this)" oninput="validateDuration(this)">
                                 <div class="duration-helper"></div>
                             </div>
                         </div>
+                        <button class="remove-btn" onclick="removeAddon('${addon.id}')" title="Remove">×</button>
                     `;
                     break;
                     
                 default:
                     addonItem.innerHTML = `
-                        <div class="addon-header">
-                            <label>${addon.name}</label>
-                            <button class="remove-btn" onclick="removeAddon('${addon.id}')" title="Remove">×</button>
-                        </div>
+                        <label class="addon-label">${addon.name}</label>
                         <div class="addon-inputs">
                             <div class="input-group">
                                 <input type="number" min="0" step="0.1" onchange="updateRecipe()">
                                 <span class="unit">g</span>
                             </div>
                         </div>
+                        <button class="remove-btn" onclick="removeAddon('${addon.id}')" title="Remove">×</button>
                     `;
                     break;
             }
@@ -1628,7 +1653,7 @@
                 mandatory: {
                     doughPortions: parseFloat(document.getElementById('doughPortions').value) || 1,
                     portionWeight: parseFloat(document.getElementById('portionWeight').value) || 500,
-                    hydration: parseFloat(document.getElementById('hydration').value) || 72,
+                    hydrationPercent: parseFloat(document.getElementById('hydrationPercent').value) || 72,
                     saltPercent: parseFloat(document.getElementById('saltPercent').value) || 2.2,
                     leaveningType: document.getElementById('leaveningType').value
                 },
@@ -1653,7 +1678,7 @@
                 if (addonId === 'tangzhong') {
                     recipe.tangzhong = {
                         flour: parseFloat(inputs[0].value) || 0,
-                        hydration: parseFloat(inputs[1].value) || 200
+                        hydrationPercent: parseFloat(inputs[1].value) || 200
                     };
                 } else if (addonId === 'whole-wheat-flour') {
                     recipe.addons.wholeWheatFlour = {
@@ -1689,7 +1714,7 @@
                     wholeWheatFlourGrams = addons.wholeWheatFlour.amount;
                 } else {
                     // Calculate as percentage of total flour
-                    const estimatedTotalFlour = mandatory.doughPortions * mandatory.portionWeight / (1 + mandatory.hydration / 100);
+                    const estimatedTotalFlour = mandatory.doughPortions * mandatory.portionWeight / (1 + mandatory.hydrationPercent / 100);
                     wholeWheatFlourGrams = estimatedTotalFlour * (addons.wholeWheatFlour.amount / 100);
                 }
             }
@@ -1698,12 +1723,12 @@
             const flour = recipeCalculations.calculateFlour(
                 mandatory.doughPortions,
                 mandatory.portionWeight,
-                mandatory.hydration,
+                mandatory.hydrationPercent,
                 wholeWheatFlourGrams
             );
             
             const totalFlour = flour + wholeWheatFlourGrams;
-            const water = recipeCalculations.calculateWater(totalFlour, mandatory.hydration);
+            const water = recipeCalculations.calculateWater(totalFlour, mandatory.hydrationPercent);
             const salt = recipeCalculations.calculateSalt(totalFlour, mandatory.saltPercent);
             
             let leavening = 0;
@@ -1821,7 +1846,7 @@
             // Remove defaults
             if (compressed.mandatory.doughPortions === 1) delete compressed.mandatory.doughPortions;
             if (compressed.mandatory.portionWeight === 500) delete compressed.mandatory.portionWeight;
-            if (compressed.mandatory.hydration === 72) delete compressed.mandatory.hydration;
+            if (compressed.mandatory.hydrationPercent === 72) delete compressed.mandatory.hydrationPercent;
             if (compressed.mandatory.saltPercent === 2.2) delete compressed.mandatory.saltPercent;
             if (compressed.mandatory.leaveningType === 'active-dry-yeast') delete compressed.mandatory.leaveningType;
             
@@ -1892,7 +1917,7 @@
                 mandatory: {
                     doughPortions: compressed.mandatory.doughPortions || 1,
                     portionWeight: compressed.mandatory.portionWeight || 500,
-                    hydration: compressed.mandatory.hydration || 72,
+                    hydrationPercent: compressed.mandatory.hydrationPercent || 72,
                     saltPercent: compressed.mandatory.saltPercent || 2.2,
                     leaveningType: compressed.mandatory.leaveningType || 'active-dry-yeast',
                     ...compressed.mandatory
@@ -1912,7 +1937,7 @@
             // Set mandatory fields
             document.getElementById('doughPortions').value = recipe.mandatory.doughPortions;
             document.getElementById('portionWeight').value = recipe.mandatory.portionWeight;
-            document.getElementById('hydration').value = recipe.mandatory.hydration;
+            document.getElementById('hydrationPercent').value = recipe.mandatory.hydrationPercent;
             document.getElementById('saltPercent').value = recipe.mandatory.saltPercent;
             document.getElementById('leaveningType').value = recipe.mandatory.leaveningType;
             
@@ -1932,7 +1957,7 @@
             if (recipe.tangzhong.flour !== undefined) {
                 showSection('tangzhong');
                 document.getElementById('tangzhongFlour').value = recipe.tangzhong.flour;
-                document.getElementById('tangzhongHydration').value = recipe.tangzhong.hydration;
+                document.getElementById('tangzhongHydration').value = recipe.tangzhong.hydrationPercent;
             }
             
             // Set addons (simplified for now)
