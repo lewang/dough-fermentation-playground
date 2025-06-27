@@ -11,6 +11,49 @@
     <!-- Chota CSS Framework -->
     <link rel="stylesheet" href="https://unpkg.com/chota@latest">
     
+    <!-- Natural language date parsing - Sugar.js for better browser support -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sugar/2.0.6/sugar.min.js"></script>
+    <script>
+        // Create a chrono-like interface using Sugar.js Date parsing
+        window.chrono = {
+            parseDate: function(text, referenceDate, options) {
+                try {
+                    // Use Sugar.js Date.create for natural language parsing
+                    const date = Sugar.Date.create(text, { future: options && options.forwardDate });
+                    return isNaN(date.getTime()) ? null : date;
+                } catch (e) {
+                    // Fallback to native Date parsing
+                    try {
+                        const fallbackDate = new Date(text);
+                        return isNaN(fallbackDate.getTime()) ? null : fallbackDate;
+                    } catch (e2) {
+                        return null;
+                    }
+                }
+            },
+            parse: function(text, referenceDate, options) {
+                // Simple implementation - just return basic info if parsing succeeds
+                const date = this.parseDate(text, referenceDate, options);
+                if (date) {
+                    return [{
+                        text: text,
+                        index: 0,
+                        start: {
+                            knownValues: {
+                                year: date.getFullYear(),
+                                month: date.getMonth() + 1,
+                                day: date.getDate(),
+                                hour: date.getHours(),
+                                minute: date.getMinutes()
+                            }
+                        }
+                    }];
+                }
+                return [];
+            }
+        };
+    </script>
+    
     <style>
         :root {
             --bg-color: #f8f9fa;
@@ -184,6 +227,143 @@
                 fill: #f8f9fa;
             }
         }
+
+        /* Live Task Editor Styles */
+        .task-editor {
+            background: var(--surface-secondary);
+            border-radius: 10px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .task-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .task-item {
+            display: grid;
+            grid-template-columns: 20px 1fr 120px 100px 80px;
+            gap: 0.5rem;
+            align-items: center;
+            padding: 0.75rem;
+            background: var(--surface-color);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            cursor: move;
+        }
+
+        .task-item:hover {
+            background: var(--surface-secondary);
+        }
+
+        .task-item.dragging {
+            opacity: 0.5;
+        }
+
+        .task-item.overlap-warning {
+            border-color: #ff6b6b;
+            background: rgba(255, 107, 107, 0.1);
+        }
+
+        .drag-handle {
+            cursor: grab;
+            color: var(--text-tertiary);
+            font-size: 14px;
+        }
+
+        .drag-handle:active {
+            cursor: grabbing;
+        }
+
+        .task-input {
+            border: none;
+            background: transparent;
+            color: var(--text-primary);
+            padding: 0.25rem;
+            border-radius: 3px;
+        }
+
+        .task-input:focus {
+            background: var(--surface-secondary);
+            outline: 1px solid var(--color-primary);
+        }
+
+        .date-input {
+            font-size: 0.9rem;
+            padding: 0.25rem;
+            border: 1px solid var(--border-color);
+            border-radius: 3px;
+            background: var(--surface-color);
+        }
+
+        .date-input:focus {
+            border-color: var(--color-primary);
+        }
+
+        .date-input.invalid {
+            border-color: #ff6b6b;
+            background: rgba(255, 107, 107, 0.1);
+        }
+
+        .category-select {
+            font-size: 0.9rem;
+            padding: 0.25rem;
+            border: 1px solid var(--border-color);
+            border-radius: 3px;
+            background: var(--surface-color);
+        }
+
+        .delete-btn {
+            background: #ff6b6b;
+            color: white;
+            border: none;
+            border-radius: 3px;
+            padding: 0.25rem 0.5rem;
+            cursor: pointer;
+            font-size: 0.8rem;
+        }
+
+        .delete-btn:hover {
+            background: #ff5252;
+        }
+
+        .add-task-btn {
+            margin-top: 1rem;
+            background: #4caf50;
+            color: white;
+        }
+
+        .add-task-btn:hover {
+            background: #43a047;
+        }
+
+        .editor-controls {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .overlap-info {
+            font-size: 0.8rem;
+            color: #ff6b6b;
+            margin-top: 0.25rem;
+        }
+
+        @media (max-width: 768px) {
+            .task-item {
+                grid-template-columns: 1fr;
+                gap: 0.25rem;
+            }
+            
+            .task-item > * {
+                width: 100%;
+            }
+        }
     </style>
 </head>
 <body>
@@ -242,6 +422,7 @@
                         <option value="%a %b %d">Day Mon DD</option>
                         <option value="%m/%d %H:%M">MM/DD HH:MM</option>
                         <option value="%b %d %H:%M">Mon DD HH:MM</option>
+                        <option value="%a %H:%M">Day HH:MM</option>
                     </select>
                 </div>
                 
@@ -276,6 +457,13 @@
                     <input type="range" id="animationDuration" min="0" max="2000" value="750">
                     <span id="animationValue">750ms</span>
                 </div>
+                
+                <div class="control-group">
+                    <label>Target End Time</label>
+                    <input type="text" id="targetEndTime" placeholder="e.g., tomorrow 5am, next Friday 6pm, in 3 hours" 
+                           onchange="updateTargetTime(this.value)">
+                    <small style="color: var(--text-tertiary);">All tasks work backwards from this time</small>
+                </div>
             </div>
             
             <!-- Action Buttons -->
@@ -287,19 +475,68 @@
                 <button class="button" onclick="shareURL()">📋 Share URL</button>
             </div>
             
+            <!-- Natural Language Date Testing -->
+            <div class="task-editor" style="margin-bottom: 2rem;">
+                <h3>🧪 Natural Language Date Parser Test</h3>
+                <div style="display: flex; flex-direction: column; gap: 1rem;">
+                    <div style="display: flex; gap: 1rem; align-items: center;">
+                        <input type="text" id="testDateInput" placeholder="Type natural language time here..." 
+                               style="flex: 1; padding: 0.75rem; border: 1px solid var(--border-color); border-radius: 6px;"
+                               oninput="testDateParsing(this.value)">
+                        <button class="button" onclick="clearTestInput()">Clear</button>
+                    </div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                        <div>
+                            <label style="font-weight: 600; color: var(--text-secondary);">Chrono.js Result:</label>
+                            <div id="chronoResult" style="padding: 0.5rem; background: var(--surface-secondary); border-radius: 4px; font-family: monospace; min-height: 2rem;">
+                                Enter text to see parsed result...
+                            </div>
+                        </div>
+                        <div>
+                            <label style="font-weight: 600; color: var(--text-secondary);">JavaScript Date:</label>
+                            <div id="jsDateResult" style="padding: 0.5rem; background: var(--surface-secondary); border-radius: 4px; font-family: monospace; min-height: 2rem;">
+                                Enter text to see JS Date object...
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        <label style="font-weight: 600; color: var(--text-secondary);">Test Examples:</label>
+                        <div style="display: flex; gap: 0.5rem; flex-wrap: wrap; margin-top: 0.5rem;">
+                            <button class="button preset-btn" onclick="testExample('tomorrow 5am')">tomorrow 5am</button>
+                            <button class="button preset-btn" onclick="testExample('next Friday 6pm')">next Friday 6pm</button>
+                            <button class="button preset-btn" onclick="testExample('in 2 hours')">in 2 hours</button>
+                            <button class="button preset-btn" onclick="testExample('today 3:30pm')">today 3:30pm</button>
+                            <button class="button preset-btn" onclick="testExample('Jan 15 2pm')">Jan 15 2pm</button>
+                            <button class="button preset-btn" onclick="testExample('next Monday at 9am')">next Monday 9am</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
             <!-- Chart Container -->
             <div id="gantt-chart"></div>
+            
+            <!-- Live Task Editor -->
+            <div class="task-editor">
+                <h3>📝 Live Task Editor</h3>
+                <div class="editor-controls">
+                    <button class="button add-task-btn" onclick="addNewTask()">+ Add Task</button>
+                    <button class="button" onclick="setTargetTimeToNow()">⏰ Set Target to Now</button>
+                </div>
+                
+                <div class="task-list" id="taskList">
+                    <!-- Tasks will be rendered here -->
+                </div>
+            </div>
             
             <!-- Data Editor -->
             <div class="data-editor">
                 <h3>📝 Edit Task Data</h3>
                 <div class="presets">
-                    <button class="button preset-btn" onclick="loadPreset('project')">Project Timeline</button>
-                    <button class="button preset-btn" onclick="loadPreset('software')">Software Development</button>
-                    <button class="button preset-btn" onclick="loadPreset('construction')">Construction</button>
-                    <button class="button preset-btn" onclick="loadPreset('simple')">Simple Tasks</button>
-                    <button class="button preset-btn" onclick="loadPreset('shortTasks')">3-Day Tasks</button>
-                    <button class="button preset-btn" onclick="loadPreset('dailyTasks')">Daily Schedule</button>
+                    <button class="button preset-btn" onclick="loadPreset('baking')">🍞 Bread Baking</button>
+                    <button class="button preset-btn" onclick="loadPreset('cooking')">🍖 Grilling</button>
+                    <button class="button preset-btn" onclick="loadPreset('coffee')">☕ Pour Over Coffee</button>
+                    <button class="button preset-btn" onclick="loadPreset('workout')">💪 Workout Routine</button>
                 </div>
                 <textarea id="taskData" placeholder="Edit JSON task data here..."></textarea>
                 <button class="button" onclick="updateFromJSON()" style="margin-top: 1rem;">Update from JSON</button>
@@ -311,124 +548,403 @@
         // Global variables
         let chartData = [];
         let chart, svg, xScale, yScale, colorScale;
+        let draggedTask = null;
+        let taskIdCounter = 1;
+        let targetEndTime = new Date(); // When the final task should complete
         
-        // Default task data
+        // Default task data (working backwards from bake time)
         const defaultTasks = [
             {
                 id: 1,
-                task: "Project Planning",
-                start: "2024-01-01",
-                end: "2024-01-15",
-                category: "Planning",
-                progress: 100
+                task: "Mix Ingredients",
+                duration: "15 minutes",
+                category: "Prep"
             },
             {
                 id: 2,
-                task: "Requirements Analysis",
-                start: "2024-01-10",
-                end: "2024-01-30",
-                category: "Analysis",
-                progress: 80
+                task: "First Rise",
+                duration: "2 hours",
+                category: "Rising"
             },
             {
                 id: 3,
-                task: "System Design",
-                start: "2024-01-25",
-                end: "2024-02-20",
-                category: "Design",
-                progress: 60
+                task: "Shape Dough",
+                duration: "10 minutes",
+                category: "Prep"
             },
             {
                 id: 4,
-                task: "Frontend Development",
-                start: "2024-02-15",
-                end: "2024-03-30",
-                category: "Development",
-                progress: 40
+                task: "Second Rise",
+                duration: "1.5 hours",
+                category: "Rising"
             },
             {
                 id: 5,
-                task: "Backend Development",
-                start: "2024-02-20",
-                end: "2024-04-10",
-                category: "Development",
-                progress: 30
+                task: "Preheat Oven",
+                duration: "30 minutes",
+                category: "Prep"
             },
             {
                 id: 6,
-                task: "Testing & QA",
-                start: "2024-03-25",
-                end: "2024-04-25",
-                category: "Testing",
-                progress: 10
-            },
-            {
-                id: 7,
-                task: "Deployment",
-                start: "2024-04-20",
-                end: "2024-05-05",
-                category: "Deployment",
-                progress: 0
+                task: "Bake",
+                duration: "45 minutes",
+                category: "Baking"
             }
         ];
         
         // Presets
         const presets = {
-            project: [
-                {id: 1, task: "Project Kickoff", start: "2024-01-01", end: "2024-01-07", category: "Planning", progress: 100},
-                {id: 2, task: "Research Phase", start: "2024-01-08", end: "2024-01-28", category: "Research", progress: 75},
-                {id: 3, task: "Design Phase", start: "2024-01-22", end: "2024-02-18", category: "Design", progress: 50},
-                {id: 4, task: "Development", start: "2024-02-12", end: "2024-04-01", category: "Development", progress: 25},
-                {id: 5, task: "Testing", start: "2024-03-25", end: "2024-04-15", category: "Testing", progress: 10},
-                {id: 6, task: "Launch", start: "2024-04-08", end: "2024-04-22", category: "Launch", progress: 0}
+            baking: [
+                {id: 1, task: "Mix Ingredients", duration: "15 minutes", category: "Prep"},
+                {id: 2, task: "First Rise", duration: "2 hours", category: "Rising"},
+                {id: 3, task: "Shape Dough", duration: "10 minutes", category: "Prep"},
+                {id: 4, task: "Second Rise", duration: "1.5 hours", category: "Rising"},
+                {id: 5, task: "Preheat Oven", duration: "30 minutes", category: "Prep"},
+                {id: 6, task: "Bake", duration: "45 minutes", category: "Baking"}
             ],
-            software: [
-                {id: 1, task: "Sprint 1: Auth System", start: "2024-01-01", end: "2024-01-14", category: "Backend", progress: 100},
-                {id: 2, task: "Sprint 2: User Dashboard", start: "2024-01-15", end: "2024-01-28", category: "Frontend", progress: 80},
-                {id: 3, task: "Sprint 3: API Integration", start: "2024-01-29", end: "2024-02-11", category: "Backend", progress: 60},
-                {id: 4, task: "Sprint 4: Mobile App", start: "2024-02-12", end: "2024-02-25", category: "Mobile", progress: 30},
-                {id: 5, task: "Code Review & Refactor", start: "2024-02-20", end: "2024-03-05", category: "QA", progress: 0},
-                {id: 6, task: "Production Deploy", start: "2024-03-01", end: "2024-03-08", category: "DevOps", progress: 0}
+            cooking: [
+                {id: 1, task: "Prep Ingredients", duration: "20 minutes", category: "Prep"},
+                {id: 2, task: "Marinate Meat", duration: "2 hours", category: "Marinating"},
+                {id: 3, task: "Heat Grill", duration: "15 minutes", category: "Setup"},
+                {id: 4, task: "Grill Main Course", duration: "25 minutes", category: "Cooking"},
+                {id: 5, task: "Rest Meat", duration: "10 minutes", category: "Resting"},
+                {id: 6, task: "Plate & Serve", duration: "5 minutes", category: "Serving"}
             ],
-            construction: [
-                {id: 1, task: "Site Preparation", start: "2024-01-01", end: "2024-01-21", category: "Site Work", progress: 90},
-                {id: 2, task: "Foundation", start: "2024-01-15", end: "2024-02-10", category: "Structure", progress: 70},
-                {id: 3, task: "Framing", start: "2024-02-05", end: "2024-03-01", category: "Structure", progress: 40},
-                {id: 4, task: "Electrical Rough-in", start: "2024-02-20", end: "2024-03-15", category: "MEP", progress: 20},
-                {id: 5, task: "Plumbing Rough-in", start: "2024-02-25", end: "2024-03-20", category: "MEP", progress: 15},
-                {id: 6, task: "Drywall", start: "2024-03-10", end: "2024-04-05", category: "Finishes", progress: 0},
-                {id: 7, task: "Final Inspection", start: "2024-04-20", end: "2024-04-25", category: "Closeout", progress: 0}
+            coffee: [
+                {id: 1, task: "Grind Beans", duration: "2 minutes", category: "Prep"},
+                {id: 2, task: "Heat Water", duration: "5 minutes", category: "Prep"},
+                {id: 3, task: "Bloom Coffee", duration: "30 seconds", category: "Brewing"},
+                {id: 4, task: "Pour Over", duration: "3 minutes", category: "Brewing"},
+                {id: 5, task: "Serve", duration: "1 minute", category: "Serving"}
             ],
-            simple: [
-                {id: 1, task: "Task A", start: "2024-01-01", end: "2024-01-10", category: "Phase 1", progress: 100},
-                {id: 2, task: "Task B", start: "2024-01-05", end: "2024-01-20", category: "Phase 1", progress: 60},
-                {id: 3, task: "Task C", start: "2024-01-15", end: "2024-02-01", category: "Phase 2", progress: 30},
-                {id: 4, task: "Task D", start: "2024-01-25", end: "2024-02-15", category: "Phase 2", progress: 0}
-            ],
-            shortTasks: [
-                {id: 1, task: "Setup Environment", start: "2024-01-01T09:00", end: "2024-01-03T17:00", category: "Setup", progress: 100},
-                {id: 2, task: "Code Review", start: "2024-01-02T10:00", end: "2024-01-04T16:00", category: "Review", progress: 75},
-                {id: 3, task: "Bug Fixes", start: "2024-01-04T09:00", end: "2024-01-06T15:00", category: "Development", progress: 50},
-                {id: 4, task: "Testing Phase", start: "2024-01-05T14:00", end: "2024-01-08T12:00", category: "Testing", progress: 25},
-                {id: 5, task: "Documentation", start: "2024-01-07T10:00", end: "2024-01-09T18:00", category: "Docs", progress: 0}
-            ],
-            dailyTasks: [
-                {id: 1, task: "Morning Standup", start: "2024-01-01T09:00", end: "2024-01-01T09:30", category: "Meeting", progress: 100},
-                {id: 2, task: "Feature Development", start: "2024-01-01T10:00", end: "2024-01-03T16:00", category: "Dev", progress: 80},
-                {id: 3, task: "Client Call", start: "2024-01-02T14:00", end: "2024-01-02T15:00", category: "Meeting", progress: 100},
-                {id: 4, task: "Code Testing", start: "2024-01-03T11:00", end: "2024-01-04T17:00", category: "QA", progress: 60},
-                {id: 5, task: "Deploy to Staging", start: "2024-01-04T15:00", end: "2024-01-04T18:00", category: "Deploy", progress: 30}
+            workout: [
+                {id: 1, task: "Warm Up", duration: "10 minutes", category: "Prep"},
+                {id: 2, task: "Strength Training", duration: "45 minutes", category: "Exercise"},
+                {id: 3, task: "Cardio", duration: "20 minutes", category: "Exercise"},
+                {id: 4, task: "Cool Down", duration: "10 minutes", category: "Recovery"},
+                {id: 5, task: "Stretch", duration: "15 minutes", category: "Recovery"}
             ]
         };
         
+        // Duration and Time Calculation Functions
+        function parseDuration(durationStr) {
+            // Parse natural language duration into milliseconds
+            const str = durationStr.toLowerCase().trim();
+            
+            // Common patterns
+            const patterns = [
+                { regex: /(\d+(?:\.\d+)?)\s*(?:hours?|hrs?|h)\s*(\d+)?\s*(?:minutes?|mins?|m)?/i, 
+                  calc: (match) => (parseFloat(match[1]) * 60 + (match[2] ? parseInt(match[2]) : 0)) * 60 * 1000 },
+                { regex: /(\d+(?:\.\d+)?)\s*(?:hours?|hrs?|h)/i, 
+                  calc: (match) => parseFloat(match[1]) * 60 * 60 * 1000 },
+                { regex: /(\d+(?:\.\d+)?)\s*(?:minutes?|mins?|m)/i, 
+                  calc: (match) => parseFloat(match[1]) * 60 * 1000 },
+                { regex: /(\d+(?:\.\d+)?)\s*(?:seconds?|secs?|s)/i, 
+                  calc: (match) => parseFloat(match[1]) * 1000 },
+                { regex: /(\d+(?:\.\d+)?)\s*(?:days?|d)/i, 
+                  calc: (match) => parseFloat(match[1]) * 24 * 60 * 60 * 1000 }
+            ];
+            
+            for (const pattern of patterns) {
+                const match = str.match(pattern.regex);
+                if (match) {
+                    return pattern.calc(match);
+                }
+            }
+            
+            // Fallback: try to parse as number of minutes
+            const num = parseFloat(str);
+            if (!isNaN(num)) {
+                return num * 60 * 1000; // assume minutes
+            }
+            
+            return 30 * 60 * 1000; // default 30 minutes
+        }
+        
+        function formatDuration(ms) {
+            const minutes = Math.floor(ms / (60 * 1000));
+            const hours = Math.floor(minutes / 60);
+            const remainingMinutes = minutes % 60;
+            
+            if (hours > 0) {
+                return remainingMinutes > 0 ? `${hours}h ${remainingMinutes}m` : `${hours}h`;
+            }
+            return `${minutes}m`;
+        }
+        
+        function calculateTaskTimes() {
+            // Calculate start and end times for all tasks working backwards from targetEndTime
+            let currentEndTime = new Date(targetEndTime);
+            
+            // Work backwards through tasks (reverse order)
+            const tasksWithTimes = [];
+            
+            for (let i = chartData.length - 1; i >= 0; i--) {
+                const task = chartData[i];
+                const durationMs = parseDuration(task.duration);
+                const startTime = new Date(currentEndTime.getTime() - durationMs);
+                
+                tasksWithTimes.unshift({
+                    ...task,
+                    startTime: startTime,
+                    endTime: new Date(currentEndTime),
+                    durationMs: durationMs
+                });
+                
+                // Move backwards for next task
+                currentEndTime = new Date(startTime);
+            }
+            
+            return tasksWithTimes;
+        }
+        
+        function updateTargetTime(timeStr) {
+            const input = document.getElementById('targetEndTime');
+            input.classList.remove('invalid');
+            
+            try {
+                let parsedTime;
+                
+                // Handle empty input
+                if (!timeStr || timeStr.trim() === '') {
+                    throw new Error('Empty time');
+                }
+                
+                // Try natural language parsing first
+                const chronoResult = chrono.parseDate(timeStr, new Date(), { forwardDate: true });
+                if (chronoResult && !isNaN(chronoResult.getTime())) {
+                    parsedTime = chronoResult;
+                    console.log('Chrono parsed:', timeStr, '->', parsedTime.toLocaleString());
+                } else {
+                    // Fallback to standard date parsing
+                    parsedTime = new Date(timeStr);
+                    if (isNaN(parsedTime.getTime())) {
+                        throw new Error('Invalid time');
+                    }
+                }
+                
+                targetEndTime = parsedTime;
+                
+                // Update the input to show the parsed result
+                input.value = parsedTime.toLocaleString();
+                
+                updateChart();
+                updateURL();
+                
+            } catch (error) {
+                input.classList.add('invalid');
+                console.warn('Invalid time format:', timeStr, error);
+            }
+        }
+        
+        function setTargetTimeToNow() {
+            targetEndTime = new Date();
+            document.getElementById('targetEndTime').value = targetEndTime.toLocaleString();
+            updateChart();
+            updateURL();
+        }
+        
+        // Date parsing test functions
+        function testDateParsing(input) {
+            const chronoDiv = document.getElementById('chronoResult');
+            const jsDateDiv = document.getElementById('jsDateResult');
+            
+            if (!input || input.trim() === '') {
+                chronoDiv.textContent = 'Enter text to see parsed result...';
+                jsDateDiv.textContent = 'Enter text to see JS Date object...';
+                return;
+            }
+            
+            try {
+                // Test Chrono.js parsing
+                const chronoResult = chrono.parseDate(input, new Date(), { forwardDate: true });
+                
+                if (chronoResult && !isNaN(chronoResult.getTime())) {
+                    chronoDiv.innerHTML = `
+                        <div style="color: #28a745;">✅ SUCCESS</div>
+                        <div>Parsed: ${chronoResult.toLocaleString()}</div>
+                        <div>ISO: ${chronoResult.toISOString()}</div>
+                        <div>Unix: ${chronoResult.getTime()}</div>
+                    `;
+                } else {
+                    chronoDiv.innerHTML = `
+                        <div style="color: #dc3545;">❌ FAILED</div>
+                        <div>Chrono.js could not parse this input</div>
+                    `;
+                }
+                
+                // Test JavaScript Date parsing
+                const jsDate = new Date(input);
+                if (!isNaN(jsDate.getTime())) {
+                    jsDateDiv.innerHTML = `
+                        <div style="color: #28a745;">✅ SUCCESS</div>
+                        <div>Parsed: ${jsDate.toLocaleString()}</div>
+                        <div>ISO: ${jsDate.toISOString()}</div>
+                        <div>Unix: ${jsDate.getTime()}</div>
+                    `;
+                } else {
+                    jsDateDiv.innerHTML = `
+                        <div style="color: #dc3545;">❌ FAILED</div>
+                        <div>JavaScript Date() could not parse this input</div>
+                    `;
+                }
+                
+                // Show detailed Chrono parsing info if available
+                if (chronoResult) {
+                    const chronoDetails = chrono.parse(input, new Date(), { forwardDate: true });
+                    if (chronoDetails && chronoDetails.length > 0) {
+                        const detail = chronoDetails[0];
+                        chronoDiv.innerHTML += `
+                            <div style="margin-top: 0.5rem; font-size: 0.85em; opacity: 0.8;">
+                                <div>Text: "${detail.text}"</div>
+                                <div>Index: ${detail.index}</div>
+                                ${detail.start ? `<div>Components: ${JSON.stringify(detail.start.knownValues, null, 2)}</div>` : ''}
+                            </div>
+                        `;
+                    }
+                }
+                
+            } catch (error) {
+                chronoDiv.innerHTML = `
+                    <div style="color: #dc3545;">❌ ERROR</div>
+                    <div>${error.message}</div>
+                `;
+                jsDateDiv.innerHTML = `
+                    <div style="color: #dc3545;">❌ ERROR</div>
+                    <div>${error.message}</div>
+                `;
+            }
+        }
+        
+        function testExample(example) {
+            document.getElementById('testDateInput').value = example;
+            testDateParsing(example);
+        }
+        
+        function clearTestInput() {
+            document.getElementById('testDateInput').value = '';
+            testDateParsing('');
+        }
+        
+        // Live Task Editor Functions
+        function renderTaskList() {
+            const taskList = document.getElementById('taskList');
+            taskList.innerHTML = '';
+            
+            chartData.forEach((task, index) => {
+                const taskItem = document.createElement('div');
+                taskItem.className = 'task-item';
+                taskItem.draggable = true;
+                taskItem.dataset.index = index;
+                
+                taskItem.innerHTML = `
+                    <div class="drag-handle">⋮⋮</div>
+                    <input type="text" class="task-input" value="${task.task}" 
+                           onchange="updateTaskField(${index}, 'task', this.value)">
+                    <input type="text" class="date-input" value="${task.duration}" 
+                           placeholder="e.g., 30 minutes, 2 hours, 1.5h"
+                           onchange="updateTaskField(${index}, 'duration', this.value)">
+                    <select class="category-select" onchange="updateTaskField(${index}, 'category', this.value)">
+                        ${getCategories().map(cat => 
+                            `<option value="${cat}" ${task.category === cat ? 'selected' : ''}>${cat}</option>`
+                        ).join('')}
+                    </select>
+                    <button class="delete-btn" onclick="deleteTask(${index})">Delete</button>
+                `;
+                
+                // Add drag and drop event listeners
+                taskItem.addEventListener('dragstart', handleDragStart);
+                taskItem.addEventListener('dragover', handleDragOver);
+                taskItem.addEventListener('drop', handleDrop);
+                taskItem.addEventListener('dragend', handleDragEnd);
+                
+                taskList.appendChild(taskItem);
+            });
+        }
+        
+        
+        function getCategories() {
+            const categories = [...new Set(chartData.map(task => task.category))];
+            const commonCategories = ['Prep', 'Rising', 'Baking', 'Cooking', 'Brewing', 'Exercise', 'Recovery'];
+            return [...new Set([...categories, ...commonCategories])];
+        }
+        
+        function updateTaskField(index, field, value) {
+            chartData[index][field] = value;
+            renderTaskList();
+            updateChart();
+            updateTaskDataEditor();
+            updateURL();
+        }
+        
+        function addNewTask() {
+            const newTask = {
+                id: ++taskIdCounter,
+                task: "New Task",
+                duration: "30 minutes",
+                category: "Prep"
+            };
+            
+            chartData.push(newTask);
+            renderTaskList();
+            updateChart();
+            updateTaskDataEditor();
+            updateURL();
+        }
+        
+        function deleteTask(index) {
+            chartData.splice(index, 1);
+            renderTaskList();
+            updateChart();
+            updateTaskDataEditor();
+            updateURL();
+        }
+        
+        
+        // Drag and Drop Functions
+        function handleDragStart(e) {
+            draggedTask = parseInt(e.target.dataset.index);
+            e.target.classList.add('dragging');
+        }
+        
+        function handleDragOver(e) {
+            e.preventDefault();
+        }
+        
+        function handleDrop(e) {
+            e.preventDefault();
+            const dropIndex = parseInt(e.target.closest('.task-item').dataset.index);
+            
+            if (draggedTask !== null && draggedTask !== dropIndex) {
+                // Reorder tasks
+                const task = chartData.splice(draggedTask, 1)[0];
+                chartData.splice(dropIndex, 0, task);
+                
+                renderTaskList();
+                updateChart();
+                updateTaskDataEditor();
+                updateURL();
+            }
+        }
+        
+        function handleDragEnd(e) {
+            e.target.classList.remove('dragging');
+            draggedTask = null;
+        }
+        
         // Initialize
         function init() {
+            // Initialize target time
+            targetEndTime = new Date(Date.now() + 4 * 60 * 60 * 1000); // 4 hours from now
+            document.getElementById('targetEndTime').value = targetEndTime.toLocaleString();
+            
             // Try to load from URL first, otherwise use default tasks
             if (!loadFromURL()) {
                 chartData = [...defaultTasks];
             }
             updateTaskDataEditor();
             setupEventListeners();
+            renderTaskList();
             updateChart();
         }
         
@@ -532,13 +1048,9 @@
             const g = svg.append('g')
                 .attr('transform', `translate(${margin.left},${margin.top})`);
             
-            // Parse dates and get extent
-            sortedTasks.forEach(d => {
-                d.startDate = new Date(d.start);
-                d.endDate = new Date(d.end);
-            });
-            
-            const dateExtent = d3.extent(sortedTasks.flatMap(d => [d.startDate, d.endDate]));
+            // Calculate task times and get extent
+            const tasksWithTimes = calculateTaskTimes();
+            const dateExtent = d3.extent(tasksWithTimes.flatMap(d => [d.startTime, d.endTime]));
             
             // Create scales
             xScale = d3.scaleTime()
@@ -546,49 +1058,42 @@
                 .range([0, innerWidth]);
             
             yScale = d3.scaleBand()
-                .domain(sortedTasks.map(d => d.task))
+                .domain(tasksWithTimes.map(d => d.task))
                 .range([0, innerHeight])
                 .padding(barPadding / 100);
             
             // Color scale
-            const categories = [...new Set(sortedTasks.map(d => d.category))];
+            const categories = [...new Set(tasksWithTimes.map(d => d.category))];
             colorScale = getColorScale(colorScheme, categories);
+            
+            // Create important dates from task data (start times only)
+            const uniqueDates = tasksWithTimes.map(d => d.startTime)
+                .concat([tasksWithTimes[tasksWithTimes.length - 1].endTime]) // Add final end time
+                .sort((a, b) => a - b);
             
             // Add grid
             if (showGrid) {
-                const xAxis = d3.axisBottom(xScale)
+                const gridAxis = d3.axisBottom(xScale)
+                    .tickValues(uniqueDates)
                     .tickSize(-innerHeight)
                     .tickFormat('');
                 
                 g.append('g')
                     .attr('class', 'grid')
                     .attr('transform', `translate(0,${innerHeight})`)
-                    .call(xAxis);
+                    .call(gridAxis);
             }
             
             // Create bars
             const bars = g.selectAll('.gantt-bar')
-                .data(sortedTasks)
+                .data(tasksWithTimes)
                 .enter()
                 .append('g')
                 .attr('class', 'gantt-bar');
             
-            // Background bars (full duration)
+            // Task bars
             bars.append('rect')
-                .attr('x', d => xScale(d.startDate))
-                .attr('y', d => yScale(d.task))
-                .attr('width', 0)
-                .attr('height', yScale.bandwidth())
-                .attr('fill', d => colorScale(d.category))
-                .attr('opacity', 0.3)
-                .attr('rx', 3)
-                .transition()
-                .duration(animationDuration)
-                .attr('width', d => xScale(d.endDate) - xScale(d.startDate));
-            
-            // Progress bars
-            bars.append('rect')
-                .attr('x', d => xScale(d.startDate))
+                .attr('x', d => xScale(d.startTime))
                 .attr('y', d => yScale(d.task))
                 .attr('width', 0)
                 .attr('height', yScale.bandwidth())
@@ -596,24 +1101,25 @@
                 .attr('rx', 3)
                 .transition()
                 .duration(animationDuration)
-                .attr('width', d => (xScale(d.endDate) - xScale(d.startDate)) * (d.progress / 100));
+                .attr('width', d => xScale(d.endTime) - xScale(d.startTime));
             
             // Add labels
             if (showLabels) {
                 bars.append('text')
                     .attr('class', 'task-text')
-                    .attr('x', d => xScale(d.startDate) + 5)
+                    .attr('x', d => xScale(d.startTime) + 5)
                     .attr('y', d => yScale(d.task) + yScale.bandwidth() / 2)
                     .attr('dy', '0.35em')
-                    .text(d => `${d.task} (${d.progress}%)`)
+                    .text(d => `${d.task} (${formatDuration(d.durationMs)})`)
                     .attr('opacity', 0)
                     .transition()
                     .duration(animationDuration)
                     .attr('opacity', 1);
             }
             
-            // Add axes
+            // Add axes with custom tick values
             const xAxis = d3.axisBottom(xScale)
+                .tickValues(uniqueDates)
                 .tickFormat(d3.timeFormat(timeFormat));
             
             const yAxis = d3.axisLeft(yScale);
@@ -642,17 +1148,18 @@
                 .style('font-size', '16px')
                 .style('font-weight', 'bold')
                 .style('fill', 'var(--text-primary)')
-                .text('Project Timeline Gantt Chart');
+                .text(`Timeline Working Backwards from ${targetEndTime.toLocaleString()}`);
             
             // Add tooltips
             bars.append('title')
-                .text(d => `${d.task}\nStart: ${d.start}\nEnd: ${d.end}\nProgress: ${d.progress}%\nCategory: ${d.category}`);
+                .text(d => `${d.task}\nStart: ${d.startTime.toLocaleString()}\nEnd: ${d.endTime.toLocaleString()}\nDuration: ${formatDuration(d.durationMs)}\nCategory: ${d.category}`);
         }
         
         // Load preset data
         function loadPreset(preset) {
             chartData = [...presets[preset]];
             updateTaskDataEditor();
+            renderTaskList();
             updateChart();
             updateURL();
         }
@@ -668,6 +1175,7 @@
                 const newData = JSON.parse(document.getElementById('taskData').value);
                 if (Array.isArray(newData) && newData.length > 0) {
                     chartData = newData;
+                    renderTaskList();
                     updateChart();
                     updateURL();
                 } else {
@@ -697,6 +1205,7 @@
                     if (Array.isArray(decodedData) && decodedData.length > 0) {
                         chartData = decodedData;
                         updateTaskDataEditor();
+                        renderTaskList();
                         return true;
                     }
                 } catch (error) {
@@ -708,24 +1217,21 @@
         
         // Randomize data
         function randomizeData() {
-            const tasks = ['Design', 'Development', 'Testing', 'Deployment', 'Marketing', 'Research'];
-            const categories = ['Planning', 'Development', 'Testing', 'Launch'];
+            const tasks = ['Prep Work', 'Primary Process', 'Secondary Process', 'Finishing', 'Quality Check', 'Final Step'];
+            const categories = ['Prep', 'Processing', 'Finishing', 'Review'];
+            const durations = ['15 minutes', '30 minutes', '1 hour', '2 hours', '45 minutes', '1.5 hours'];
             
             chartData = tasks.map((task, i) => {
-                const startDate = new Date(2024, 0, 1 + i * 10 + Math.random() * 20);
-                const endDate = new Date(startDate.getTime() + (Math.random() * 30 + 10) * 24 * 60 * 60 * 1000);
-                
                 return {
                     id: i + 1,
                     task: task,
-                    start: startDate.toISOString().split('T')[0],
-                    end: endDate.toISOString().split('T')[0],
-                    category: categories[Math.floor(Math.random() * categories.length)],
-                    progress: Math.floor(Math.random() * 100)
+                    duration: durations[Math.floor(Math.random() * durations.length)],
+                    category: categories[Math.floor(Math.random() * categories.length)]
                 };
             });
             
             updateTaskDataEditor();
+            renderTaskList();
             updateChart();
             updateURL();
         }
