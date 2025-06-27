@@ -405,8 +405,38 @@
             border-color: var(--border-color);
         }
         
-        input[type="number"]:focus {
+        /* Hide default number input spinners and create custom styling */
+        input[type="number"]::-webkit-outer-spin-button,
+        input[type="number"]::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
+        input[type="number"] {
+            -moz-appearance: textfield;
+        }
+        
+        input[type="number"]:focus, textarea:focus {
             border-color: var(--color-primary);
+        }
+
+        /* Custom select styling for consistent dark mode */
+        select {
+            background: var(--surface-color);
+            color: var(--text-primary);
+            border: 1px solid var(--border-color);
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2'%3e%3cpolyline points='6,9 12,15 18,9'%3e%3c/polyline%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 0.75rem center;
+            background-size: 1rem;
+            padding-right: 2.5rem;
+            appearance: none;
+        }
+
+        select:focus {
+            outline: none;
+            border-color: var(--color-primary);
+            box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.1);
         }
         
         label {
@@ -488,6 +518,466 @@
                 font-size: 1.5rem;
             }
         }
+
+        /* Recipe Title as Section Header */
+        .recipe-header {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 2rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 2px solid var(--border-color);
+        }
+
+        .recipe-name {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin: 0;
+            padding: 0.5rem 0;
+        }
+
+        .edit-icon {
+            cursor: pointer;
+            color: var(--text-tertiary);
+            font-size: 1rem;
+            padding: 0.25rem;
+            border-radius: 4px;
+            transition: all 0.2s ease;
+            user-select: none;
+        }
+
+        .edit-icon:hover {
+            color: var(--color-primary);
+            background: var(--surface-secondary);
+        }
+
+        .recipe-section {
+            background: var(--surface-secondary);
+            border-radius: 10px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .recipe-section h2 {
+            margin-top: 0;
+            margin-bottom: 1rem;
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 0.5rem;
+            color: var(--text-primary);
+            font-size: 1.25rem;
+            font-weight: 600;
+        }
+
+        .recipe-inputs {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        /* Responsive input row layout */
+        .input-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            align-items: end;
+        }
+
+        /* Modern input group styling - horizontal layout */
+        .input-group {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            gap: 0.75rem;
+            position: relative;
+        }
+
+        .input-group.full-width {
+            grid-column: 1 / -1;
+        }
+
+        .input-group label {
+            font-weight: 600;
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+            margin-bottom: 0;
+            white-space: nowrap;
+            min-width: fit-content;
+            flex-shrink: 0;
+        }
+
+        /* Modern input styling */
+        .input-group input,
+        .input-group select {
+            padding: 0.75rem 1rem;
+            border: 1.5px solid var(--border-color);
+            border-radius: 8px;
+            background: var(--surface-color);
+            color: var(--text-primary);
+            font-size: 0.875rem;
+            transition: all 0.2s ease;
+            box-sizing: border-box;
+            max-width: 100%;
+        }
+
+        /* Better focus states */
+        .input-group input:focus,
+        .input-group select:focus {
+            outline: none;
+            border-color: var(--color-primary);
+            box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.1);
+            transform: translateY(-1px);
+        }
+
+        /* Specific input widths for horizontal layout */
+        .input-group input[type="number"] {
+            width: 100px;
+            flex-shrink: 0;
+        }
+
+        .input-group select {
+            width: 140px;
+            flex-shrink: 0;
+        }
+
+        .input-group input[type="text"] {
+            flex: 1;
+            min-width: 120px;
+        }
+
+        .input-group.full-width input,
+        .input-group.full-width select {
+            max-width: 100%;
+        }
+
+        /* Unit labels positioning for horizontal layout */
+        .input-group .unit {
+            color: var(--text-tertiary);
+            font-size: 0.75rem;
+            font-weight: 500;
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+
+        /* Horizontal layout for main dough inputs - label and input side by side */
+        .input-group.main-input {
+            flex-direction: row;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .input-group.main-input label {
+            margin-bottom: 0;
+            white-space: nowrap;
+            width: 120px;
+            text-align: left;
+            flex-shrink: 0;
+        }
+
+        .input-group.main-input .unit {
+            margin-left: 0.5rem;
+            color: var(--text-tertiary);
+            font-size: 0.75rem;
+            font-weight: 500;
+            white-space: nowrap;
+        }
+
+        .input-group.main-input input,
+        .input-group.main-input select {
+            width: 100px;
+            flex-shrink: 0;
+        }
+
+        .input-group.main-input input[type="number"] {
+            padding-right: 0.75rem;
+        }
+
+        .conditional-inputs {
+            margin-top: 0.5rem;
+            padding-top: 0.5rem;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .addon-search-section {
+            background: var(--surface-secondary);
+            border-radius: 10px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .addon-search-section h2 {
+            margin-top: 0;
+            margin-bottom: 1rem;
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 0.5rem;
+            color: var(--text-primary);
+            font-size: 1.25rem;
+            font-weight: 600;
+        }
+
+        /* Recipe Output and Debug Section Headers */
+        .recipe-output h2,
+        .debug-section h3 {
+            margin-top: 0;
+            margin-bottom: 1rem;
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 0.5rem;
+            color: var(--text-primary);
+            font-size: 1.25rem;
+            font-weight: 600;
+        }
+
+        .search-container {
+            position: relative;
+        }
+
+        .search-container input {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            background: var(--surface-color);
+            color: var(--text-primary);
+            font-size: 1rem;
+        }
+
+        .search-container input:focus {
+            outline: none;
+            border-color: var(--color-primary);
+        }
+
+        .suggestions-dropdown {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: var(--surface-color);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            max-height: 200px;
+            overflow-y: auto;
+            z-index: 1000;
+            display: none;
+        }
+
+        .suggestions-dropdown.show {
+            display: block;
+        }
+
+        .suggestion-item {
+            padding: 0.75rem;
+            cursor: pointer;
+            border-bottom: 1px solid var(--border-color);
+            transition: background-color 0.2s ease;
+        }
+
+        .suggestion-item:hover,
+        .suggestion-item.selected {
+            background: var(--surface-secondary);
+        }
+
+        .suggestion-item:last-child {
+            border-bottom: none;
+        }
+
+        /* Modern addon item styling */
+        .addon-item {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            padding: 1rem;
+            background: var(--surface-color);
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            border: 1px solid var(--border-color);
+            transition: all 0.2s ease;
+        }
+
+        .addon-item:hover {
+            border-color: var(--color-primary);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Addon header with remove button in corner */
+        .addon-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 0.5rem;
+            position: relative;
+        }
+
+        .addon-header label {
+            font-weight: 600;
+            color: var(--text-primary);
+            margin: 0;
+            padding-right: 20px;
+        }
+
+        /* Tiny x button in top-right corner */
+        .addon-item .remove-btn,
+        .remove-btn {
+            background: rgba(156, 163, 175, 0.08);
+            color: #9ca3af;
+            border: none;
+            border-radius: 50%;
+            width: 14px;
+            height: 14px;
+            padding: 0;
+            cursor: pointer;
+            font-size: 9px;
+            font-weight: 300;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            line-height: 1;
+            position: absolute;
+            top: -2px;
+            right: -2px;
+        }
+
+        .addon-item .remove-btn:hover,
+        .remove-btn:hover {
+            background: rgba(239, 68, 68, 0.12);
+            color: #ef4444;
+            transform: scale(1.1);
+        }
+
+        /* Addon input rows */
+        .addon-inputs {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 0.75rem;
+            align-items: end;
+        }
+
+        .recipe-output {
+            background: var(--surface-color);
+            border-radius: 10px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            border: 2px solid var(--color-primary);
+        }
+
+        .recipe-display {
+            font-family: 'Georgia', serif;
+        }
+
+        .ingredient-list {
+            margin-bottom: 1.5rem;
+        }
+
+        .ingredient-list h3 {
+            margin-bottom: 1rem;
+            color: var(--text-primary);
+        }
+
+        .ingredient {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid var(--border-color);
+            font-size: 1.1rem;
+        }
+
+        .ingredient:last-child {
+            border-bottom: none;
+        }
+
+        .ingredient-name {
+            font-weight: 500;
+        }
+
+        .ingredient-amount {
+            font-weight: 600;
+            color: var(--color-primary);
+        }
+
+        .recipe-stats {
+            background: var(--surface-secondary);
+            padding: 1rem;
+            border-radius: 6px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+        }
+
+        .recipe-stat {
+            text-align: center;
+            padding: 0.5rem;
+        }
+
+        .recipe-stat .stat-value {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--color-primary);
+        }
+
+        .recipe-stat .stat-label {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+
+        .debug-section {
+            background: var(--surface-secondary);
+            border-radius: 10px;
+            padding: 1.5rem;
+            margin-top: 1.5rem;
+        }
+
+        .debug-section textarea {
+            width: 100%;
+            height: 150px;
+            padding: 1rem;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            background: var(--surface-color);
+            color: var(--text-primary);
+            font-family: 'Monaco', 'Consolas', monospace;
+            font-size: 0.8rem;
+            resize: vertical;
+        }
+
+        .debug-controls {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .duration-helper {
+            font-size: 0.8rem;
+            margin-top: 0.25rem;
+            color: var(--text-tertiary);
+            font-style: italic;
+        }
+
+        .duration-helper.valid {
+            color: var(--color-success);
+        }
+
+        .duration-helper.invalid {
+            color: var(--color-error);
+        }
+
+        input.invalid {
+            border-color: var(--color-error);
+            background: rgba(220, 53, 69, 0.1);
+        }
+
+        @media (max-width: 768px) {
+            .input-row {
+                grid-template-columns: 1fr;
+            }
+
+            .debug-controls {
+                flex-direction: column;
+            }
+
+            .recipe-stats {
+                grid-template-columns: 1fr;
+            }
+        }
     </style>
 </head>
 <body>
@@ -501,7 +991,8 @@
                 ☰
             </button>
             <ul class="nav-menu" id="navMenu">
-                <li><a href="#" class="nav-link active" onclick="showTab('fermentation', this)">🧪 Fermentation Predictor</a></li>
+                <li><a href="#" class="nav-link active" onclick="showTab('recipe-maker', this)">🍞 Recipe Maker</a></li>
+                <li><a href="#" class="nav-link" onclick="showTab('fermentation', this)">🧪 Fermentation Predictor</a></li>
                 <li><a href="#" class="nav-link" onclick="showTab('optimization', this)">📊 Model Optimization</a></li>
                 <li><a href="#" class="nav-link" onclick="showTab('advanced', this)">🤖 Advanced Models</a></li>
             </ul>
@@ -511,8 +1002,150 @@
     <!-- Main Content -->
     <main class="main-content">
         <div class="container">
+            <!-- Recipe Maker Tab -->
+            <div id="recipe-maker" class="tab-content active">
+                <div class="content-container">
+                    <div class="recipe-header">
+                        <h1 class="recipe-name">New Recipe</h1>
+                        <span class="edit-icon" onclick="editRecipeName()" title="Edit recipe name">✏️</span>
+                    </div>
+                    
+                    <!-- Section 1: Mandatory Inputs -->
+                    <section class="recipe-section mandatory">
+                        <h2>🍞 Main Dough</h2>
+                        <div class="recipe-inputs">
+                            <div class="input-row">
+                                <div class="input-group main-input">
+                                    <label for="doughPortions">Dough Portions</label>
+                                    <input type="number" id="doughPortions" value="1" min="1" onchange="updateRecipe()">
+                                </div>
+                                <div class="input-group main-input">
+                                    <label for="portionWeight">Portion Weight</label>
+                                    <input type="number" id="portionWeight" value="500" min="1" onchange="updateRecipe()">
+                                    <span class="unit">g</span>
+                                </div>
+                            </div>
+                            
+                            <div class="input-row">
+                                <div class="input-group main-input">
+                                    <label for="hydration">Hydration</label>
+                                    <input type="number" id="hydration" value="72" min="1" max="200" step="0.1" onchange="updateRecipe()">
+                                    <span class="unit">baker%</span>
+                                </div>
+                                <div class="input-group main-input">
+                                    <label for="saltPercent">Salt</label>
+                                    <input type="number" id="saltPercent" value="2.2" min="0" max="10" step="0.1" onchange="updateRecipe()">
+                                    <span class="unit">baker%</span>
+                                </div>
+                            </div>
+                            
+                            <div class="input-row">
+                                <div class="input-group main-input">
+                                    <label for="leaveningType">Leavening</label>
+                                    <select id="leaveningType" onchange="updateLeaveningInputs()">
+                                        <option value="active-dry-yeast">Active Dry Yeast</option>
+                                        <option value="instant-yeast">Instant Yeast</option>
+                                        <option value="cake-yeast">Cake Yeast</option>
+                                        <option value="sourdough-starter">Sourdough Starter</option>
+                                        <option value="poolish">Poolish</option>
+                                    </select>
+                                </div>
+                                <!-- Yeast % in same row as Leavening -->
+                                <div id="yeastInputs" class="input-group main-input">
+                                    <label for="yeastPercent">Yeast</label>
+                                    <input type="number" id="yeastPercent" value="0.210" step="0.001" min="0" onchange="updateRecipe()">
+                                    <span class="unit">baker%</span>
+                                </div>
+                            </div>
+                            
+                            <!-- Conditional Preferment Inputs -->
+                            <div id="prefermentInputs" class="conditional-inputs" style="display: none;">
+                                <div class="input-row">
+                                    <div class="input-group main-input">
+                                        <label for="inoculatedFlourPercent">Inoculated Flour % of Whole</label>
+                                        <input type="number" id="inoculatedFlourPercent" step="0.1" min="0" onchange="updateRecipe()">
+                                        <span class="unit">%</span>
+                                    </div>
+                                    <div class="input-group main-input">
+                                        <label for="prefermentHydration">Preferment Hydration</label>
+                                        <input type="number" id="prefermentHydration" step="0.1" min="0" onchange="updateRecipe()">
+                                        <span class="unit">%</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                    
+                    <!-- Add-on Search -->
+                    <section class="addon-search-section">
+                        <h2>✨ Add Ingredients/Processes</h2>
+                        <div class="search-container">
+                            <input type="text" id="addonSearch" placeholder="Type to add: TangZhong, Whole Wheat Flour, Oil, etc."
+                                   oninput="showAddonSuggestions(this.value)" 
+                                   onkeydown="handleAddonKeydown(event)"
+                                   onclick="showAddonSuggestions(this.value)"
+                                   onfocus="showAddonSuggestions(this.value)">
+                            <div id="addonSuggestions" class="suggestions-dropdown"></div>
+                        </div>
+                    </section>
+                    
+                    <!-- Section 2: TangZhong (Optional) -->
+                    <section class="recipe-section tangzhong" id="tangzhongSection" style="display: none;">
+                        <h2>🌾 TangZhong</h2>
+                        <div class="recipe-inputs">
+                            <div class="input-row">
+                                <div class="input-group main-input">
+                                    <label for="tangzhongFlour">TangZhong Flour:</label>
+                                    <input type="number" id="tangzhongFlour" min="0" onchange="updateRecipe()">
+                                    <span class="unit">g</span>
+                                </div>
+                                <div class="input-group main-input">
+                                    <label for="tangzhongHydration">TangZhong Hydration:</label>
+                                    <input type="number" id="tangzhongHydration" value="200" min="0" onchange="updateRecipe()">
+                                    <span class="unit">%</span>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                    
+                    <!-- Section 3: Addons (Optional) -->
+                    <section class="recipe-section addons" id="addonsSection" style="display: none;">
+                        <h2>✨ Add-ons</h2>
+                        <div id="addonsList" class="recipe-inputs">
+                            <!-- Dynamic addon inputs will be added here -->
+                        </div>
+                    </section>
+                    
+                    <!-- Section 4: Processes (Optional) -->
+                    <section class="recipe-section processes" id="processesSection" style="display: none;">
+                        <h2>⏰ Processes</h2>
+                        <div id="processesList" class="recipe-inputs">
+                            <!-- Dynamic process inputs will be added here -->
+                        </div>
+                    </section>
+                    
+                    <!-- Recipe Output -->
+                    <section class="recipe-output">
+                        <h2>📋 Recipe</h2>
+                        <div id="recipeDisplay" class="recipe-display">
+                            <!-- Calculated ingredients will appear here -->
+                        </div>
+                    </section>
+                    
+                    <!-- Debug & Share -->
+                    <section class="debug-section">
+                        <h3>🔧 Debug JSON</h3>
+                        <textarea id="recipeJson" readonly placeholder="Recipe data will appear here..."></textarea>
+                        <div class="debug-controls">
+                            <button class="button" onclick="shareRecipe()">📋 Share Recipe URL</button>
+                            <button class="button" onclick="copyRecipeJson()">📄 Copy JSON</button>
+                        </div>
+                    </section>
+                </div>
+            </div>
+            
             <!-- Fermentation Predictor Tab -->
-            <div id="fermentation" class="tab-content active">
+            <div id="fermentation" class="tab-content">
                 <div class="content-container">
                     <h1 class="text-center">🧪 Fermentation Predictor</h1>
                     <p class="text-center text-grey">Enter any 2 parameters to predict the third using the Arrhenius kinetics model</p>
@@ -624,6 +1257,702 @@
     </main>
 
     <script>
+        // Recipe Maker Global Variables
+        let currentRecipeData = {};
+        let selectedAddonIndex = -1;
+        const availableAddons = [
+            { id: 'tangzhong', name: 'TangZhong', section: 'addons' },
+            { id: 'whole-wheat-flour', name: 'Whole Wheat Flour', section: 'addons' },
+            { id: 'oil', name: 'Oil', section: 'addons' },
+            { id: 'milk', name: 'Milk (90% water)', section: 'addons' },
+            { id: 'sugar', name: 'Sugar', section: 'addons' },
+            { id: 'butter', name: 'Butter', section: 'addons' },
+            { id: 'eggs', name: 'Eggs', section: 'addons' },
+            { id: 'baking-powder', name: 'Baking Powder', section: 'addons' },
+            { id: 'cold-fermentation', name: 'Cold Fermentation (CF)', section: 'processes' },
+            { id: 'room-temp-fermentation', name: 'Room Temperature (RT) Fermentation', section: 'processes' }
+        ];
+
+        // Recipe Maker Calculation Engine
+        const recipeCalculations = {
+            yeastScaling: {
+                'active-dry-yeast': 1.0,
+                'instant-yeast': 0.762,
+                'cake-yeast': 2.38
+            },
+            
+            calculateFlour: function(portions, portionWeight, hydration, wholeWheatFlour = 0) {
+                const totalWeight = portions * portionWeight;
+                const flourWeight = totalWeight / (1 + hydration / 100);
+                return Math.max(0, flourWeight - wholeWheatFlour);
+            },
+            
+            calculateWater: function(totalFlour, hydration) {
+                return totalFlour * (hydration / 100);
+            },
+            
+            calculateSalt: function(totalFlour, saltPercent) {
+                return totalFlour * (saltPercent / 100);
+            },
+            
+            calculateYeast: function(totalFlour, yeastPercent, yeastType) {
+                const baseAmount = totalFlour * (yeastPercent / 100);
+                return baseAmount * this.yeastScaling[yeastType];
+            }
+        };
+
+        // Recipe Name Editing
+        function editRecipeName() {
+            const nameElement = document.querySelector('.recipe-name');
+            const currentName = nameElement.textContent;
+            
+            const input = document.createElement('input');
+            input.type = 'text';
+            input.value = currentName;
+            input.className = 'recipe-name-input';
+            input.style.cssText = 'font-size: inherit; font-weight: inherit; border: 2px solid var(--color-primary); border-radius: 6px; padding: 0.5rem; background: var(--surface-color); color: var(--text-primary); width: 300px; margin: 0;';
+            
+            nameElement.parentNode.replaceChild(input, nameElement);
+            input.focus();
+            input.select();
+            
+            function saveRecipeName() {
+                const newName = input.value.trim() || 'New Recipe';
+                const newNameElement = document.createElement('h1');
+                newNameElement.className = 'recipe-name';
+                newNameElement.textContent = newName;
+                
+                input.parentNode.replaceChild(newNameElement, input);
+                updateRecipe();
+            }
+            
+            input.addEventListener('blur', saveRecipeName);
+            input.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    saveRecipeName();
+                }
+                if (e.key === 'Escape') {
+                    input.value = currentName;
+                    saveRecipeName();
+                }
+            });
+        }
+
+        // Leavening Type Management
+        function updateLeaveningInputs() {
+            const leaveningType = document.getElementById('leaveningType').value;
+            const yeastInputs = document.getElementById('yeastInputs');
+            const prefermentInputs = document.getElementById('prefermentInputs');
+            
+            if (['active-dry-yeast', 'instant-yeast', 'cake-yeast'].includes(leaveningType)) {
+                yeastInputs.style.display = 'flex';
+                prefermentInputs.style.display = 'none';
+                
+                // Update default yeast percentage based on type
+                const yeastPercent = document.getElementById('yeastPercent');
+                switch (leaveningType) {
+                    case 'active-dry-yeast':
+                        yeastPercent.value = '0.210';
+                        break;
+                    case 'instant-yeast':
+                        yeastPercent.value = (0.210 * 0.762).toFixed(3);
+                        break;
+                    case 'cake-yeast':
+                        yeastPercent.value = (0.210 * 2.38).toFixed(3);
+                        break;
+                }
+            } else {
+                yeastInputs.style.display = 'none';
+                prefermentInputs.style.display = 'block';
+            }
+            
+            updateRecipe();
+        }
+
+        // Add-on Search and Suggestions
+        function showAddonSuggestions(searchTerm) {
+            const suggestions = document.getElementById('addonSuggestions');
+            searchTerm = searchTerm.toLowerCase().trim();
+            
+            // Show all available addons if no search term (on click/focus with empty input)
+            let filteredAddons;
+            if (!searchTerm) {
+                filteredAddons = availableAddons.filter(addon => !isAddonActive(addon.id));
+            } else {
+                filteredAddons = availableAddons.filter(addon => 
+                    addon.name.toLowerCase().includes(searchTerm) && 
+                    !isAddonActive(addon.id)
+                );
+            }
+            
+            if (filteredAddons.length === 0) {
+                suggestions.classList.remove('show');
+                return;
+            }
+            
+            suggestions.innerHTML = filteredAddons.map((addon, index) => 
+                `<div class="suggestion-item ${index === selectedAddonIndex ? 'selected' : ''}" 
+                      onclick="addIngredient('${addon.id}')" 
+                      data-index="${index}">
+                    ${addon.name}
+                </div>`
+            ).join('');
+            
+            suggestions.classList.add('show');
+        }
+
+        function handleAddonKeydown(event) {
+            const suggestions = document.getElementById('addonSuggestions');
+            const items = suggestions.querySelectorAll('.suggestion-item');
+            
+            if (!suggestions.classList.contains('show') || items.length === 0) return;
+            
+            switch (event.key) {
+                case 'ArrowDown':
+                    event.preventDefault();
+                    selectedAddonIndex = Math.min(selectedAddonIndex + 1, items.length - 1);
+                    updateSelectedSuggestion(items);
+                    break;
+                    
+                case 'ArrowUp':
+                    event.preventDefault();
+                    selectedAddonIndex = Math.max(selectedAddonIndex - 1, -1);
+                    updateSelectedSuggestion(items);
+                    break;
+                    
+                case 'Enter':
+                    event.preventDefault();
+                    if (selectedAddonIndex >= 0 && items[selectedAddonIndex]) {
+                        const addonId = items[selectedAddonIndex].onclick.toString().match(/'([^']+)'/)[1];
+                        addIngredient(addonId);
+                    }
+                    break;
+                    
+                case 'Escape':
+                    suggestions.classList.remove('show');
+                    selectedAddonIndex = -1;
+                    break;
+            }
+        }
+
+        function updateSelectedSuggestion(items) {
+            items.forEach((item, index) => {
+                item.classList.toggle('selected', index === selectedAddonIndex);
+            });
+        }
+
+        function isAddonActive(addonId) {
+            return document.querySelector(`[data-addon-id="${addonId}"]`) !== null;
+        }
+
+        function addIngredient(addonId) {
+            const addon = availableAddons.find(a => a.id === addonId);
+            if (!addon) return;
+            
+            document.getElementById('addonSearch').value = '';
+            document.getElementById('addonSuggestions').classList.remove('show');
+            selectedAddonIndex = -1;
+            
+            createAddonInputs(addon);
+            showSection(addon.section);
+            
+            updateRecipe();
+        }
+
+        function createAddonInputs(addon) {
+            const container = addon.section === 'processes' ? 
+                document.getElementById('processesList') : 
+                document.getElementById('addonsList');
+            
+            const addonItem = document.createElement('div');
+            addonItem.className = 'addon-item';
+            addonItem.setAttribute('data-addon-id', addon.id);
+            
+            switch (addon.id) {
+                case 'tangzhong':
+                    addonItem.innerHTML = `
+                        <div class="addon-header">
+                            <label>TangZhong</label>
+                            <button class="remove-btn" onclick="removeAddon('${addon.id}')" title="Remove">×</button>
+                        </div>
+                        <div class="addon-inputs">
+                            <div class="input-group">
+                                <label>Flour (g):</label>
+                                <input type="number" min="0" step="0.1" onchange="updateRecipe()">
+                            </div>
+                            <div class="input-group">
+                                <label>Hydration (%):</label>
+                                <input type="number" min="0" step="0.1" value="200" onchange="updateRecipe()">
+                            </div>
+                        </div>
+                    `;
+                    break;
+                    
+                case 'whole-wheat-flour':
+                    addonItem.innerHTML = `
+                        <div class="addon-header">
+                            <label>Whole Wheat Flour</label>
+                            <button class="remove-btn" onclick="removeAddon('${addon.id}')" title="Remove">×</button>
+                        </div>
+                        <div class="addon-inputs">
+                            <div class="input-group">
+                                <input type="number" min="0" step="0.1" onchange="updateRecipe()">
+                            </div>
+                            <div class="input-group">
+                                <select onchange="updateRecipe()">
+                                    <option value="percent">% of all flour</option>
+                                    <option value="grams">g</option>
+                                </select>
+                            </div>
+                        </div>
+                    `;
+                    break;
+                    
+                case 'cold-fermentation':
+                case 'room-temp-fermentation':
+                    addonItem.innerHTML = `
+                        <div class="addon-header">
+                            <label>${addon.name}</label>
+                            <button class="remove-btn" onclick="removeAddon('${addon.id}')" title="Remove">×</button>
+                        </div>
+                        <div class="addon-inputs">
+                            <div class="input-group">
+                                <label>Temperature (°C):</label>
+                                <input type="number" min="0" max="50" step="0.1" onchange="updateRecipe()">
+                            </div>
+                            <div class="input-group">
+                                <label>Duration:</label>
+                                <input type="text" placeholder="e.g., 12 hours, 2 days" onchange="validateDuration(this)" oninput="validateDuration(this)">
+                                <div class="duration-helper"></div>
+                            </div>
+                        </div>
+                    `;
+                    break;
+                    
+                default:
+                    addonItem.innerHTML = `
+                        <div class="addon-header">
+                            <label>${addon.name}</label>
+                            <button class="remove-btn" onclick="removeAddon('${addon.id}')" title="Remove">×</button>
+                        </div>
+                        <div class="addon-inputs">
+                            <div class="input-group">
+                                <input type="number" min="0" step="0.1" onchange="updateRecipe()">
+                                <span class="unit">g</span>
+                            </div>
+                        </div>
+                    `;
+                    break;
+            }
+            
+            container.appendChild(addonItem);
+        }
+
+        function removeAddon(addonId) {
+            const addonElement = document.querySelector(`[data-addon-id="${addonId}"]`);
+            if (addonElement) {
+                addonElement.remove();
+            }
+            
+            // Check if sections should be hidden
+            if (document.getElementById('addonsList').children.length === 0) {
+                hideSection('addons');
+            }
+            if (document.getElementById('processesList').children.length === 0) {
+                hideSection('processes');
+            }
+            
+            updateRecipe();
+        }
+
+        function showSection(sectionName) {
+            const section = document.getElementById(sectionName + 'Section');
+            if (section) {
+                section.style.display = 'block';
+            }
+        }
+
+        function hideSection(sectionName) {
+            const section = document.getElementById(sectionName + 'Section');
+            if (section) {
+                section.style.display = 'none';
+            }
+        }
+
+        function validateDuration(inputElement) {
+            const helper = inputElement.parentElement.querySelector('.duration-helper');
+            if (!helper) return;
+            
+            try {
+                // Use existing parseDuration function if available, otherwise simple validation
+                const durationText = inputElement.value.trim();
+                if (!durationText) {
+                    helper.textContent = '';
+                    inputElement.classList.remove('invalid');
+                    return;
+                }
+                
+                // Simple duration validation - look for numbers followed by time units
+                const durationRegex = /(\d+(?:\.\d+)?)\s*(hours?|hrs?|h|days?|d|minutes?|mins?|m|weeks?|w)/i;
+                const match = durationText.match(durationRegex);
+                
+                if (match) {
+                    helper.textContent = `✓ ${durationText}`;
+                    helper.className = 'duration-helper valid';
+                    inputElement.classList.remove('invalid');
+                } else {
+                    helper.textContent = '⚠ Format: "12 hours", "2 days", etc.';
+                    helper.className = 'duration-helper invalid';
+                    inputElement.classList.add('invalid');
+                }
+            } catch (error) {
+                helper.textContent = '⚠ Invalid duration format';
+                helper.className = 'duration-helper invalid';
+                inputElement.classList.add('invalid');
+            }
+        }
+
+        // Main Recipe Update Function
+        function updateRecipe() {
+            const recipe = collectRecipeData();
+            const calculations = performCalculations(recipe);
+            updateRecipeDisplay(calculations);
+            updateDebugJson(recipe);
+            updateURL(recipe);
+        }
+
+        function collectRecipeData() {
+            const recipe = {
+                name: document.querySelector('.recipe-name').textContent,
+                mandatory: {
+                    doughPortions: parseFloat(document.getElementById('doughPortions').value) || 1,
+                    portionWeight: parseFloat(document.getElementById('portionWeight').value) || 500,
+                    hydration: parseFloat(document.getElementById('hydration').value) || 72,
+                    saltPercent: parseFloat(document.getElementById('saltPercent').value) || 2.2,
+                    leaveningType: document.getElementById('leaveningType').value
+                },
+                tangzhong: {},
+                addons: {},
+                processes: {}
+            };
+            
+            // Collect leavening data
+            if (['active-dry-yeast', 'instant-yeast', 'cake-yeast'].includes(recipe.mandatory.leaveningType)) {
+                recipe.mandatory.yeastPercent = parseFloat(document.getElementById('yeastPercent').value) || 0;
+            } else {
+                recipe.mandatory.inoculatedFlourPercent = parseFloat(document.getElementById('inoculatedFlourPercent').value) || 0;
+                recipe.mandatory.prefermentHydration = parseFloat(document.getElementById('prefermentHydration').value) || 0;
+            }
+            
+            // Collect addon data
+            document.querySelectorAll('#addonsList .addon-item').forEach(item => {
+                const addonId = item.getAttribute('data-addon-id');
+                const inputs = item.querySelectorAll('input, select');
+                
+                if (addonId === 'tangzhong') {
+                    recipe.tangzhong = {
+                        flour: parseFloat(inputs[0].value) || 0,
+                        hydration: parseFloat(inputs[1].value) || 200
+                    };
+                } else if (addonId === 'whole-wheat-flour') {
+                    recipe.addons.wholeWheatFlour = {
+                        amount: parseFloat(inputs[0].value) || 0,
+                        unit: inputs[1].value
+                    };
+                } else {
+                    recipe.addons[addonId] = parseFloat(inputs[0].value) || 0;
+                }
+            });
+            
+            // Collect process data
+            document.querySelectorAll('#processesList .addon-item').forEach(item => {
+                const addonId = item.getAttribute('data-addon-id');
+                const inputs = item.querySelectorAll('input');
+                
+                recipe.processes[addonId] = {
+                    temperature: parseFloat(inputs[0].value) || 0,
+                    duration: inputs[1].value || ''
+                };
+            });
+            
+            return recipe;
+        }
+
+        function performCalculations(recipe) {
+            const { mandatory, tangzhong, addons } = recipe;
+            
+            // Calculate whole wheat flour in grams
+            let wholeWheatFlourGrams = 0;
+            if (addons.wholeWheatFlour) {
+                if (addons.wholeWheatFlour.unit === 'grams') {
+                    wholeWheatFlourGrams = addons.wholeWheatFlour.amount;
+                } else {
+                    // Calculate as percentage of total flour
+                    const estimatedTotalFlour = mandatory.doughPortions * mandatory.portionWeight / (1 + mandatory.hydration / 100);
+                    wholeWheatFlourGrams = estimatedTotalFlour * (addons.wholeWheatFlour.amount / 100);
+                }
+            }
+            
+            // Calculate main ingredients
+            const flour = recipeCalculations.calculateFlour(
+                mandatory.doughPortions,
+                mandatory.portionWeight,
+                mandatory.hydration,
+                wholeWheatFlourGrams
+            );
+            
+            const totalFlour = flour + wholeWheatFlourGrams;
+            const water = recipeCalculations.calculateWater(totalFlour, mandatory.hydration);
+            const salt = recipeCalculations.calculateSalt(totalFlour, mandatory.saltPercent);
+            
+            let leavening = 0;
+            let leaveningName = mandatory.leaveningType.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+            
+            if (['active-dry-yeast', 'instant-yeast', 'cake-yeast'].includes(mandatory.leaveningType)) {
+                leavening = recipeCalculations.calculateYeast(totalFlour, mandatory.yeastPercent, mandatory.leaveningType);
+            } else {
+                leavening = totalFlour * (mandatory.inoculatedFlourPercent / 100);
+            }
+            
+            return {
+                flour,
+                wholeWheatFlour: wholeWheatFlourGrams,
+                totalFlour,
+                water,
+                salt,
+                leavening,
+                leaveningName,
+                leaveningType: mandatory.leaveningType,
+                totalWeight: totalFlour + water + salt + leavening,
+                actualHydration: (water / totalFlour) * 100,
+                addons,
+                processes: recipe.processes
+            };
+        }
+
+        function updateRecipeDisplay(calculations) {
+            const display = document.getElementById('recipeDisplay');
+            
+            let ingredientsList = `
+                <div class="ingredient-list">
+                    <h3>Ingredients</h3>
+                    <div class="ingredient">
+                        <span class="ingredient-name">Bread Flour</span>
+                        <span class="ingredient-amount">${calculations.flour.toFixed(1)}g</span>
+                    </div>
+            `;
+            
+            if (calculations.wholeWheatFlour > 0) {
+                ingredientsList += `
+                    <div class="ingredient">
+                        <span class="ingredient-name">Whole Wheat Flour</span>
+                        <span class="ingredient-amount">${calculations.wholeWheatFlour.toFixed(1)}g</span>
+                    </div>
+                `;
+            }
+            
+            ingredientsList += `
+                    <div class="ingredient">
+                        <span class="ingredient-name">Water</span>
+                        <span class="ingredient-amount">${calculations.water.toFixed(1)}g</span>
+                    </div>
+                    <div class="ingredient">
+                        <span class="ingredient-name">${calculations.leaveningName}</span>
+                        <span class="ingredient-amount">${calculations.leavening.toFixed(2)}g</span>
+                    </div>
+                    <div class="ingredient">
+                        <span class="ingredient-name">Salt</span>
+                        <span class="ingredient-amount">${calculations.salt.toFixed(1)}g</span>
+                    </div>
+            `;
+            
+            // Add addons to ingredients list
+            Object.entries(calculations.addons).forEach(([key, value]) => {
+                if (key === 'wholeWheatFlour' || value === 0) return;
+                
+                const name = availableAddons.find(a => a.id === key)?.name || key;
+                ingredientsList += `
+                    <div class="ingredient">
+                        <span class="ingredient-name">${name}</span>
+                        <span class="ingredient-amount">${value.toFixed(1)}g</span>
+                    </div>
+                `;
+            });
+            
+            ingredientsList += '</div>';
+            
+            const stats = `
+                <div class="recipe-stats">
+                    <div class="recipe-stat">
+                        <div class="stat-value">${calculations.totalFlour.toFixed(0)}g</div>
+                        <div class="stat-label">Total Flour</div>
+                    </div>
+                    <div class="recipe-stat">
+                        <div class="stat-value">${calculations.totalWeight.toFixed(0)}g</div>
+                        <div class="stat-label">Total Weight</div>
+                    </div>
+                    <div class="recipe-stat">
+                        <div class="stat-value">${calculations.actualHydration.toFixed(1)}%</div>
+                        <div class="stat-label">Hydration</div>
+                    </div>
+                </div>
+            `;
+            
+            display.innerHTML = ingredientsList + stats;
+        }
+
+        function updateDebugJson(recipe) {
+            document.getElementById('recipeJson').value = JSON.stringify(recipe, null, 2);
+        }
+
+        // URL Sharing Functions
+        function updateURL(recipe) {
+            const compressed = compressRecipeForUrl(recipe);
+            const url = new URL(window.location);
+            url.searchParams.set('recipe', compressed);
+            window.history.replaceState({}, '', url);
+        }
+
+        function compressRecipeForUrl(recipe) {
+            // Remove default values and empty fields to minimize URL size
+            const compressed = JSON.parse(JSON.stringify(recipe));
+            
+            // Remove defaults
+            if (compressed.mandatory.doughPortions === 1) delete compressed.mandatory.doughPortions;
+            if (compressed.mandatory.portionWeight === 500) delete compressed.mandatory.portionWeight;
+            if (compressed.mandatory.hydration === 72) delete compressed.mandatory.hydration;
+            if (compressed.mandatory.saltPercent === 2.2) delete compressed.mandatory.saltPercent;
+            if (compressed.mandatory.leaveningType === 'active-dry-yeast') delete compressed.mandatory.leaveningType;
+            
+            // Remove empty objects
+            if (Object.keys(compressed.tangzhong).length === 0) delete compressed.tangzhong;
+            if (Object.keys(compressed.addons).length === 0) delete compressed.addons;
+            if (Object.keys(compressed.processes).length === 0) delete compressed.processes;
+            
+            return btoa(JSON.stringify(compressed));
+        }
+
+        function shareRecipe() {
+            const url = window.location.href;
+            if (navigator.clipboard) {
+                navigator.clipboard.writeText(url).then(() => {
+                    alert('Recipe URL copied to clipboard! Share this link to share your recipe.');
+                }).catch(() => {
+                    promptForCopy(url);
+                });
+            } else {
+                promptForCopy(url);
+            }
+        }
+
+        function promptForCopy(url) {
+            const textArea = document.createElement('textarea');
+            textArea.value = url;
+            document.body.appendChild(textArea);
+            textArea.select();
+            document.execCommand('copy');
+            document.body.removeChild(textArea);
+            alert('Recipe URL copied to clipboard! Share this link to share your recipe.');
+        }
+
+        function copyRecipeJson() {
+            const json = document.getElementById('recipeJson').value;
+            if (navigator.clipboard) {
+                navigator.clipboard.writeText(json).then(() => {
+                    alert('Recipe JSON copied to clipboard!');
+                });
+            } else {
+                document.getElementById('recipeJson').select();
+                document.execCommand('copy');
+                alert('Recipe JSON copied to clipboard!');
+            }
+        }
+
+        function loadRecipeFromUrl() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const recipeData = urlParams.get('recipe');
+            
+            if (recipeData) {
+                try {
+                    const compressed = JSON.parse(atob(recipeData));
+                    const recipe = expandRecipeData(compressed);
+                    populateForm(recipe);
+                    updateRecipe();
+                } catch (error) {
+                    console.warn('Failed to load recipe from URL:', error);
+                }
+            }
+        }
+
+        function expandRecipeData(compressed) {
+            // Restore defaults
+            const recipe = {
+                name: compressed.name || 'New Recipe',
+                mandatory: {
+                    doughPortions: compressed.mandatory.doughPortions || 1,
+                    portionWeight: compressed.mandatory.portionWeight || 500,
+                    hydration: compressed.mandatory.hydration || 72,
+                    saltPercent: compressed.mandatory.saltPercent || 2.2,
+                    leaveningType: compressed.mandatory.leaveningType || 'active-dry-yeast',
+                    ...compressed.mandatory
+                },
+                tangzhong: compressed.tangzhong || {},
+                addons: compressed.addons || {},
+                processes: compressed.processes || {}
+            };
+            
+            return recipe;
+        }
+
+        function populateForm(recipe) {
+            // Set recipe name
+            document.querySelector('.recipe-name').textContent = recipe.name;
+            
+            // Set mandatory fields
+            document.getElementById('doughPortions').value = recipe.mandatory.doughPortions;
+            document.getElementById('portionWeight').value = recipe.mandatory.portionWeight;
+            document.getElementById('hydration').value = recipe.mandatory.hydration;
+            document.getElementById('saltPercent').value = recipe.mandatory.saltPercent;
+            document.getElementById('leaveningType').value = recipe.mandatory.leaveningType;
+            
+            updateLeaveningInputs();
+            
+            if (recipe.mandatory.yeastPercent !== undefined) {
+                document.getElementById('yeastPercent').value = recipe.mandatory.yeastPercent;
+            }
+            if (recipe.mandatory.inoculatedFlourPercent !== undefined) {
+                document.getElementById('inoculatedFlourPercent').value = recipe.mandatory.inoculatedFlourPercent;
+            }
+            if (recipe.mandatory.prefermentHydration !== undefined) {
+                document.getElementById('prefermentHydration').value = recipe.mandatory.prefermentHydration;
+            }
+            
+            // Set TangZhong
+            if (recipe.tangzhong.flour !== undefined) {
+                showSection('tangzhong');
+                document.getElementById('tangzhongFlour').value = recipe.tangzhong.flour;
+                document.getElementById('tangzhongHydration').value = recipe.tangzhong.hydration;
+            }
+            
+            // Set addons (simplified for now)
+            // Set processes (simplified for now)
+        }
+
+        // Initialize Recipe Maker on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            loadRecipeFromUrl();
+            updateRecipe();
+            
+            // Hide suggestions when clicking outside
+            document.addEventListener('click', function(e) {
+                if (!e.target.closest('.search-container')) {
+                    document.getElementById('addonSuggestions').classList.remove('show');
+                    selectedAddonIndex = -1;
+                }
+            });
+        });
+
         // Navigation functions
         function toggleMenu() {
             const navMenu = document.getElementById('navMenu');
