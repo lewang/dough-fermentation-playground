@@ -181,22 +181,6 @@
     border-top: 1px solid var(--border-color);
 }
 
-.addon-search-section {
-    background: var(--surface-secondary);
-    border-radius: 10px;
-    padding: 1.5rem;
-    margin-bottom: 1.5rem;
-}
-
-.addon-search-section h2 {
-    margin-top: 0;
-    margin-bottom: 1rem;
-    border-bottom: 2px solid var(--border-color);
-    padding-bottom: 0.5rem;
-    color: var(--text-primary);
-    font-size: 1.25rem;
-    font-weight: 600;
-}
 
 /* Recipe Output and Debug Section Headers */
 .recipe-output h2,
@@ -263,37 +247,7 @@
     border-bottom: none;
 }
 
-/* Single row addon item styling */
-.addon-item {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    padding: 1rem;
-    background: var(--surface-color);
-    border-radius: 8px;
-    margin-bottom: 1rem;
-    border: 1px solid var(--border-color);
-    transition: all 0.2s ease;
-    position: relative;
-}
-
-.addon-item:hover {
-    border-color: var(--color-primary);
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-}
-
-/* Addon label on the left */
-.addon-item .addon-label {
-    font-weight: 500;
-    color: var(--text-primary);
-    font-size: 1.5rem;
-    white-space: nowrap;
-    min-width: 180px;
-    margin: 0;
-}
-
-/* Tiny x button integrated in flex layout */
-.addon-item .remove-btn,
+/* Remove button styling for general use */
 .remove-btn {
     background: rgba(156, 163, 175, 0.08);
     color: #9ca3af;
@@ -314,49 +268,10 @@
     margin-left: auto;
 }
 
-.addon-item .remove-btn:hover,
 .remove-btn:hover {
     background: rgba(239, 68, 68, 0.12);
     color: #ef4444;
     transform: scale(1.1);
-}
-
-/* Addon inputs in single row - responsive grid for consistent alignment */
-.addon-inputs {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 1.5rem;
-    align-items: center;
-    flex: 1;
-    min-width: 0;
-}
-
-/* Addon input groups in single row */
-.addon-inputs .input-group {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    flex-shrink: 0;
-}
-
-.addon-inputs .input-group label {
-    font-size: 1.5rem;
-    font-weight: 500;
-    white-space: nowrap;
-    margin-bottom: 0;
-    min-width: fit-content;
-}
-
-.addon-inputs .input-group input,
-.addon-inputs .input-group select {
-    width: 100px;
-    font-size: 1.5rem;
-    padding: 0.75rem;
-}
-
-.addon-inputs .input-group .unit {
-    font-size: 1.25rem;
-    margin-left: 0.25rem;
 }
 
 .recipe-output {
@@ -489,26 +404,4 @@ input.invalid {
         font-size: 1.5rem;
     }
 
-    /* Addon responsive design */
-    .addon-item {
-        flex-direction: column;
-        align-items: stretch;
-        gap: 0.75rem;
-    }
-
-    .addon-item .addon-label {
-        min-width: unset;
-        text-align: center;
-    }
-
-    .addon-inputs {
-        display: flex;
-        flex-direction: column;
-        gap: 0.75rem;
-    }
-
-    .addon-item .remove-btn {
-        align-self: flex-end;
-        margin-left: 0;
-    }
 }

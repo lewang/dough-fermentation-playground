@@ -5,11 +5,6 @@ export function RecipeDisplay({ calculatedData }) {
 
   const { ingredients, stats } = calculatedData;
 
-  const formatName = (key) => {
-    return key.split('-').map(word => 
-      word.charAt(0).toUpperCase() + word.slice(1)
-    ).join(' ');
-  };
 
   return (
     <section className="recipe-output">
@@ -22,12 +17,6 @@ export function RecipeDisplay({ calculatedData }) {
             <span className="ingredient-amount">{ingredients.flour}g</span>
           </div>
           
-          {ingredients.wholeWheatFlour > 0 && (
-            <div className="ingredient">
-              <span className="ingredient-name">Whole Wheat Flour</span>
-              <span className="ingredient-amount">{ingredients.wholeWheatFlour}g</span>
-            </div>
-          )}
           
           <div className="ingredient">
             <span className="ingredient-name">Water</span>
@@ -43,36 +32,7 @@ export function RecipeDisplay({ calculatedData }) {
           </div>
         </div>
 
-        {ingredients.tangzhong && ingredients.tangzhong.flour > 0 && (
-          <div className="ingredient-list">
-            <h3>🌾 TangZhong</h3>
-            <div className="ingredient">
-              <span className="ingredient-name">Flour</span>
-              <span className="ingredient-amount">{ingredients.tangzhong.flour}g</span>
-            </div>
-            <div className="ingredient">
-              <span className="ingredient-name">Water</span>
-              <span className="ingredient-amount">{ingredients.tangzhong.water}g</span>
-            </div>
-          </div>
-        )}
 
-        {Object.keys(ingredients.addons || {}).length > 0 && (
-          <div className="ingredient-list">
-            <h3>✨ Additional Ingredients</h3>
-            {Object.entries(ingredients.addons).map(([key, addon]) => {
-              if (addon.amount > 0) {
-                return (
-                  <div key={key} className="ingredient">
-                    <span className="ingredient-name">{formatName(key)}</span>
-                    <span className="ingredient-amount">{addon.amount}g</span>
-                  </div>
-                );
-              }
-              return null;
-            })}
-          </div>
-        )}
 
         <div className="recipe-stats">
           <div className="recipe-stat">

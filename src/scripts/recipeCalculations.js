@@ -29,13 +29,6 @@ export const recipeCalculations = {
         return baseYeast * scaling;
     },
 
-    calculateTangZhong: function(tangzhongFlour, tangzhongHydration) {
-        if (!tangzhongFlour || tangzhongFlour <= 0) return { flour: 0, water: 0 };
-        return {
-            flour: tangzhongFlour,
-            water: tangzhongFlour * (tangzhongHydration / 100)
-        };
-    },
 
     calculatePreferment: function(totalFlour, inoculatedPercent, prefermentHydration) {
         if (!inoculatedPercent || inoculatedPercent <= 0) return { flour: 0, water: 0 };
