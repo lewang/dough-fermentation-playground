@@ -6,6 +6,7 @@ import { stepTemplates } from '../../data/stepTemplates.js';
 import { createDragHandlers } from '../../utils/dragDrop.js';
 
 export function StepsSection({ steps, onStepsChange }) {
+  const [showSearchInput, setShowSearchInput] = useState(false);
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedIndex, setSelectedIndex] = useState(-1);
@@ -35,6 +36,16 @@ export function StepsSection({ steps, onStepsChange }) {
     setSearchQuery('');
     setShowSuggestions(false);
     setSelectedIndex(-1);
+    setShowSearchInput(false);
+  };
+
+  const showAddStepInput = () => {
+    setShowSearchInput(true);
+    setShowSuggestions(true);
+    // Focus the input after it's rendered
+    setTimeout(() => {
+      searchRef.current?.querySelector('input')?.focus();
+    }, 0);
   };
 
   const updateStep = (index, updatedStep) => {
@@ -71,7 +82,9 @@ export function StepsSection({ steps, onStepsChange }) {
         break;
       case 'Escape':
         setShowSuggestions(false);
-        searchRef.current?.blur();
+        setShowSearchInput(false);
+        setSearchQuery('');
+        searchRef.current?.querySelector('input')?.blur();
         break;
     }
   };
@@ -86,11 +99,13 @@ export function StepsSection({ steps, onStepsChange }) {
     setShowSuggestions(true);
   };
 
-  // Close suggestions when clicking outside
+  // Close suggestions and hide input when clicking outside
   useEffect(() => {
     const handleClickOutside = (e) => {
       if (searchRef.current && !searchRef.current.contains(e.target)) {
         setShowSuggestions(false);
+        setShowSearchInput(false);
+        setSearchQuery('');
       }
     };
 
@@ -99,11 +114,49 @@ export function StepsSection({ steps, onStepsChange }) {
   }, []);
 
   return (
-    <Section title="⏰ Steps" className="steps-section">
-      {/* Add step interface */}
-      <div style={{ marginBottom: '1.5rem' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '0.5rem' }}>
-          <div style={{ position: 'relative', flex: 1 }} ref={searchRef}>
+    <section className="recipe-section steps-section">
+      {/* Custom header with + button */}
+      <div style={{ 
+        display: 'flex', 
+        justifyContent: 'space-between', 
+        alignItems: 'center',
+        marginBottom: '1rem',
+        borderBottom: '2px solid var(--border-color)',
+        paddingBottom: '0.5rem'
+      }}>
+        <h2 style={{ 
+          margin: 0,
+          color: 'var(--text-primary)',
+          fontSize: '1.25rem',
+          fontWeight: '600'
+        }}>
+          ⏰ Steps
+        </h2>
+        <button
+          onClick={showAddStepInput}
+          style={{
+            background: 'var(--color-primary)',
+            color: 'white',
+            border: 'none',
+            borderRadius: '8px',
+            width: '32px',
+            height: '32px',
+            fontSize: '18px',
+            cursor: 'pointer',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center'
+          }}
+          title="Add step"
+        >
+          +
+        </button>
+      </div>
+
+      {/* Add step search interface - only show when needed */}
+      {showSearchInput && (
+        <div style={{ marginBottom: '1.5rem' }} ref={searchRef}>
+          <div style={{ position: 'relative' }}>
             <input
               type="text"
               placeholder="Search step templates..."
@@ -161,51 +214,33 @@ export function StepsSection({ steps, onStepsChange }) {
               </div>
             )}
           </div>
-          
-          <button
-            onClick={() => setShowSuggestions(!showSuggestions)}
-            style={{
-              background: 'var(--color-primary)',
-              color: 'white',
-              border: 'none',
-              borderRadius: '8px',
-              width: '40px',
-              height: '40px',
-              fontSize: '20px',
-              cursor: 'pointer',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center'
-            }}
-            title="Add step"
-          >
-            +
-          </button>
         </div>
-      </div>
-
-      {/* Steps list */}
-      {steps.length === 0 ? (
-        <div style={{
-          textAlign: 'center',
-          padding: '2rem',
-          color: 'var(--text-tertiary)',
-          fontStyle: 'italic'
-        }}>
-          No steps added yet. Search for a step template above to get started.
-        </div>
-      ) : (
-        steps.map((step, index) => (
-          <RecipeStep
-            key={step.id || index}
-            step={step}
-            index={index}
-            onUpdate={updateStep}
-            onRemove={removeStep}
-            stepDragHandlers={stepDragHandlers}
-          />
-        ))
       )}
-    </Section>
+
+      <div className="recipe-inputs">
+        {/* Steps list */}
+        {steps.length === 0 ? (
+          <div style={{
+            textAlign: 'center',
+            padding: '2rem',
+            color: 'var(--text-tertiary)',
+            fontStyle: 'italic'
+          }}>
+            No steps added yet. Click the + button above to get started.
+          </div>
+        ) : (
+          steps.map((step, index) => (
+            <RecipeStep
+              key={step.id || index}
+              step={step}
+              index={index}
+              onUpdate={updateStep}
+              onRemove={removeStep}
+              stepDragHandlers={stepDragHandlers}
+            />
+          ))
+        )}
+      </div>
+    </section>
   );
 }
