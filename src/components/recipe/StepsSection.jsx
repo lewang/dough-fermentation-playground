@@ -12,9 +12,11 @@ export function StepsSection({ steps, onStepsChange }) {
   const [selectedIndex, setSelectedIndex] = useState(-1);
   const searchRef = useRef();
 
+
   const filteredTemplates = stepTemplates.filter(template =>
     template.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
+  
 
   const addStep = (template) => {
     const newStep = {
@@ -42,6 +44,7 @@ export function StepsSection({ steps, onStepsChange }) {
   const showAddStepInput = () => {
     setShowSearchInput(true);
     setShowSuggestions(true);
+    
     // Focus the input after it's rendered
     setTimeout(() => {
       searchRef.current?.querySelector('input')?.focus();
@@ -99,19 +102,12 @@ export function StepsSection({ steps, onStepsChange }) {
     setShowSuggestions(true);
   };
 
-  // Close suggestions and hide input when clicking outside
-  useEffect(() => {
-    const handleClickOutside = (e) => {
-      if (searchRef.current && !searchRef.current.contains(e.target)) {
-        setShowSuggestions(false);
-        setShowSearchInput(false);
-        setSearchQuery('');
-      }
-    };
-
-    document.addEventListener('click', handleClickOutside);
-    return () => document.removeEventListener('click', handleClickOutside);
-  }, []);
+  // Hide input when it loses focus
+  const handleSearchBlur = () => {
+    setShowSuggestions(false);
+    setShowSearchInput(false);
+    setSearchQuery('');
+  };
 
   return (
     <section className="recipe-section steps-section">
@@ -163,7 +159,9 @@ export function StepsSection({ steps, onStepsChange }) {
               placeholder="Search step templates..."
               value={searchQuery}
               onChange={handleSearchChange}
+              onInput={handleSearchChange}
               onFocus={handleSearchFocus}
+              onBlur={handleSearchBlur}
               onKeyDown={handleSearchKeyDown}
               style={{
                 width: '100%',
