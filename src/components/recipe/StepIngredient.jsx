@@ -25,31 +25,15 @@ export function StepIngredient({
       onDragEnd={dragHandlers.handleDragEnd}
       onDragOver={dragHandlers.handleDragOver}
       onDrop={dragHandlers.handleDrop(index)}
-      style={{
-        display: 'flex',
-        alignItems: 'flex-start',
-        gap: '0.75rem',
-        padding: '0.75rem',
-        background: 'var(--surface-secondary)',
-        border: '1px solid var(--border-color)',
-        borderRadius: '4px',
-        margin: '0.25rem auto',
-        cursor: 'grab',
-        maxWidth: '80%'
-      }}
     >
       <span 
-        style={{ 
-          color: 'var(--text-tertiary)', 
-          cursor: 'grab',
-          fontSize: '0.9rem'
-        }}
+        className="step-ingredient-drag-handle"
         title="Drag to reorder"
       >
         ≡
       </span>
       
-      <div style={{ flex: '1 1 auto', fontSize: '0.9rem', display: 'flex', alignItems: 'center', minWidth: 0 }}>
+      <div className="step-ingredient-name-container">
         <EditableText
           value={ingredient.name}
           onChange={handleNameChange}
@@ -57,23 +41,14 @@ export function StepIngredient({
         />
       </div>
       
-      <div style={{ display: 'flex', alignItems: 'flex-start', marginTop: '0.1rem' }}>
+      <div className="step-ingredient-value-container">
         <input
           type="number"
           min="0"
           step="0.1"
           value={ingredient.value || ingredient.defaultValue || ''}
           onChange={handleValueChange}
-          style={{
-            width: '80px',
-            padding: '0.5rem',
-            border: '1px solid var(--border-color)',
-            borderRadius: '4px',
-            background: 'var(--surface-color)',
-            color: 'var(--text-primary)',
-            fontSize: '0.9rem',
-            flexShrink: 0
-          }}
+          className="step-ingredient-value-input"
         />
       </div>
       
@@ -88,24 +63,10 @@ export function StepIngredient({
         )}
       </div>
       
-      <div style={{ marginTop: '0.1rem' }}>
+      <div className="step-ingredient-remove-container">
         <button
           onClick={() => onRemove(index)}
-          className="remove-btn"
-          style={{
-            background: 'rgba(239, 68, 68, 0.1)',
-            color: '#ef4444',
-            border: 'none',
-            borderRadius: '4px',
-            width: '24px',
-            height: '24px',
-            fontSize: '14px',
-            cursor: 'pointer',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            flexShrink: 0
-          }}
+          className="step-ingredient-remove-btn"
           title="Remove ingredient"
         >
           ×

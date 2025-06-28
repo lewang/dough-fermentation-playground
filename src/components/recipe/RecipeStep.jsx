@@ -107,14 +107,6 @@ export function RecipeStep({
       onDragEnd={stepDragHandlers.handleDragEnd}
       onDragOver={stepDragHandlers.handleDragOver}
       onDrop={stepDragHandlers.handleDrop(index)}
-      style={{
-        background: 'var(--surface-color)',
-        border: '1px solid var(--border-color)',
-        borderRadius: '8px',
-        padding: '1rem',
-        marginBottom: '1rem',
-        position: 'relative'
-      }}
     >
       {/* Drag handle and step header */}
       <div style={{ display: 'flex', alignItems: 'center', marginBottom: '1rem' }}>
