@@ -1,7 +1,7 @@
 // Available ingredients for recipe creation
 export const availableIngredients = [
-  { "name": "flour", "type": "flour" },
-  { "name": "boiling water", "type": "water" },
+  { "name": "Flour", "type": "flour" },
+  { "name": "Boiling water", "type": "water" },
   { "name": "Whole Wheat Flour", "type": "flour" },
   { "name": "Oil" },
   { "name": "Milk (90% water)", "type": "water", "scaling": 0.9 },
@@ -9,9 +9,13 @@ export const availableIngredients = [
   { "name": "Butter" },
   { "name": "Eggs", "type": "water", "scaling": 0.75 },
   { "name": "Baking Powder" },
-  { "name": "water", "type": "water" },
-  { "name": "salt" },
-  { "name": "yeast" }
+  { "name": "Water room temp", "type": "water" },
+  { "name": "Salt" },
+  { "name": "Active Dry Yeast" },
+  { "name": "Instant Yeast" },
+  { "name": "Cake Yeast" },
+  { "name": "Sourdough Starter (100% hydration)" },
+  { "name": "Poolish (100% hydration)" }
 ];
 
 /**

@@ -98,3 +98,107 @@ export const WithReps = {
     isCollapsed: false,
   },
 };
+
+export const WithGroupId = {
+  args: {
+    step: {
+      id: 4,
+      name: 'Day1. Autolyse',
+      duration: '30 minutes',
+      ingredients: [
+        {
+          name: 'flour',
+          type: 'flour',
+          unit: 'g',
+          value: 500,
+          defaultValue: 500
+        },
+        {
+          name: 'water room temp',
+          type: 'water',
+          unit: 'g',
+          value: 360,
+          defaultValue: 360
+        }
+      ]
+    },
+    index: 3,
+    stepDragHandlers: mockStepDragHandlers,
+    isCollapsed: false,
+  },
+};
+
+export const WithLongGroupId = {
+  args: {
+    step: {
+      id: 5,
+      name: 'Preferment. Create Poolish Starter',
+      duration: '12 hours',
+      temperature: 22,
+      ingredients: [
+        {
+          name: 'flour',
+          type: 'flour',
+          unit: 'g',
+          value: 150,
+          defaultValue: 150
+        },
+        {
+          name: 'water room temp',
+          type: 'water',
+          unit: 'g',
+          value: 150,
+          defaultValue: 150
+        },
+        {
+          name: 'instant yeast',
+          type: 'generic',
+          unit: 'g',
+          value: 0.5,
+          defaultValue: 0.5
+        }
+      ]
+    },
+    index: 4,
+    stepDragHandlers: mockStepDragHandlers,
+    isCollapsed: false,
+  },
+};
+
+export const GroupedStepCollapsed = {
+  args: {
+    step: {
+      id: 6,
+      name: 'Day2. Bulk Fermentation',
+      duration: '4 hours',
+      temperature: 24,
+      ingredients: []
+    },
+    index: 5,
+    stepDragHandlers: mockStepDragHandlers,
+    isCollapsed: true,
+  },
+};
+
+export const MultipleGroupsExample = {
+  args: {
+    step: {
+      id: 7,
+      name: 'Final. Bake',
+      duration: '35 minutes',
+      temperature: 230,
+      ingredients: [
+        {
+          name: 'shaped dough',
+          type: 'generic',
+          unit: 'pieces',
+          value: 2,
+          defaultValue: 2
+        }
+      ]
+    },
+    index: 6,
+    stepDragHandlers: mockStepDragHandlers,
+    isCollapsed: false,
+  },
+};

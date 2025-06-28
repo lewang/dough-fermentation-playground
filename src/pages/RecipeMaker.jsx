@@ -31,6 +31,9 @@ export function RecipeMaker({ active }) {
   
   // Calculated results
   const [calculatedData, setCalculatedData] = useState(null);
+  
+  // Debug JSON state
+  const [debugJsonText, setDebugJsonText] = useState('');
 
   // Derived state
   const showPreferment = recipeData.leaveningType === 'sourdough-starter' || 
@@ -113,6 +116,12 @@ export function RecipeMaker({ active }) {
     calculateRecipe();
   }, [recipeData]);
 
+  // Update debug JSON text when data changes
+  useEffect(() => {
+    const data = { recipeName, mandatory: recipeData, steps: getStepsWithGroupIds() };
+    setDebugJsonText(JSON.stringify(data, null, 2));
+  }, [recipeName, recipeData, steps]);
+
   // Transform steps to include parsed group IDs
   const getStepsWithGroupIds = () => {
     return steps.map(step => {
@@ -164,6 +173,32 @@ export function RecipeMaker({ active }) {
     }
   };
 
+  // Update recipe from JSON
+  const updateFromJson = () => {
+    try {
+      const data = JSON.parse(debugJsonText);
+      
+      // Update recipe name if provided
+      if (data.recipeName) {
+        setRecipeName(data.recipeName);
+      }
+      
+      // Update main recipe data if provided
+      if (data.mandatory) {
+        setRecipeData(data.mandatory);
+      }
+      
+      // Update steps if provided
+      if (data.steps) {
+        setSteps(data.steps);
+      }
+      
+      alert('Recipe updated successfully from JSON!');
+    } catch (error) {
+      alert('Invalid JSON format. Please check your JSON syntax.');
+    }
+  };
+
 
   return (
     <TabContent id="recipe-maker" active={active}>
@@ -196,11 +231,14 @@ export function RecipeMaker({ active }) {
       <section className="debug-section">
         <h3>🔧 Debug JSON</h3>
         <textarea 
-          readOnly 
           placeholder="Recipe data will appear here..."
-          value={JSON.stringify({ recipeName, mandatory: recipeData, steps: getStepsWithGroupIds() }, null, 2)}
+          value={debugJsonText}
+          onChange={(e) => setDebugJsonText(e.target.value)}
         />
         <div className="debug-controls">
+          <Button onClick={updateFromJson}>
+            🔄 Update
+          </Button>
           <Button onClick={shareRecipe}>
             📋 Share Recipe URL
           </Button>

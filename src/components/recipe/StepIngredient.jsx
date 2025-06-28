@@ -54,10 +54,11 @@ export function StepIngredient({
       
       <div className="ingredient-unit-container">
         <span className="unit-label">{ingredient.unit}</span>
-        {ingredient.scaling && ingredient.scaling < 1 && (ingredient.value || ingredient.defaultValue) && (
+        {ingredient.scaling && ingredient.scaling < 1 && (ingredient.value != null || ingredient.defaultValue != null) && 
+         Math.round((ingredient.value ?? ingredient.defaultValue ?? 0) * ingredient.scaling) > 0 && (
           <div className="water-scaling">
             <span>
-              ({((ingredient.value || ingredient.defaultValue) * ingredient.scaling).toFixed(1)}g water)
+              ({Math.round((ingredient.value ?? ingredient.defaultValue ?? 0) * ingredient.scaling)}g water)
             </span>
           </div>
         )}

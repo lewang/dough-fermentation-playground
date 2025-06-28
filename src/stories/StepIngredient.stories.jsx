@@ -77,3 +77,18 @@ export const EmptyValue = {
     dragHandlers: mockDragHandlers,
   },
 };
+
+export const EmptyValueWithWaterScaling = {
+  args: {
+    ingredient: {
+      name: 'Eggs',
+      type: 'water',
+      unit: 'g',
+      value: 0,
+      defaultValue: null,
+      scaling: 0.75
+    },
+    index: 0,
+    dragHandlers: mockDragHandlers,
+  },
+};
