@@ -29,12 +29,13 @@ export function StepIngredient({
         display: 'flex',
         alignItems: 'center',
         gap: '0.75rem',
-        padding: '0.5rem',
+        padding: '0.75rem',
         background: 'var(--surface-secondary)',
         border: '1px solid var(--border-color)',
         borderRadius: '4px',
-        margin: '0.25rem 0',
-        cursor: 'grab'
+        margin: '0.25rem auto',
+        cursor: 'grab',
+        maxWidth: '80%'
       }}
     >
       <span 
@@ -48,7 +49,7 @@ export function StepIngredient({
         ≡
       </span>
       
-      <div style={{ flex: 1, fontSize: '0.9rem', display: 'flex', alignItems: 'center', minWidth: 0 }}>
+      <div style={{ flex: '1 1 auto', fontSize: '0.9rem', display: 'flex', alignItems: 'center', minWidth: 0 }}>
         <EditableText
           value={ingredient.name}
           onChange={handleNameChange}
@@ -63,8 +64,8 @@ export function StepIngredient({
         value={ingredient.value || ingredient.defaultValue || ''}
         onChange={handleValueChange}
         style={{
-          width: '70px',
-          padding: '0.25rem',
+          width: '80px',
+          padding: '0.5rem',
           border: '1px solid var(--border-color)',
           borderRadius: '4px',
           background: 'var(--surface-color)',
@@ -86,13 +87,14 @@ export function StepIngredient({
           color: '#ef4444',
           border: 'none',
           borderRadius: '4px',
-          width: '20px',
-          height: '20px',
-          fontSize: '12px',
+          width: '24px',
+          height: '24px',
+          fontSize: '14px',
           cursor: 'pointer',
           display: 'flex',
           alignItems: 'center',
-          justifyContent: 'center'
+          justifyContent: 'center',
+          flexShrink: 0
         }}
         title="Remove ingredient"
       >
