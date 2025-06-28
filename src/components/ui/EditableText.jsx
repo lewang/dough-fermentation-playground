@@ -69,7 +69,7 @@ export function EditableText({
           marginLeft: '0.5rem',
           cursor: 'pointer',
           color: 'var(--text-tertiary)',
-          fontSize: '0.9rem'
+          fontSize: '0.54rem'
         }}
       >
         ✏️

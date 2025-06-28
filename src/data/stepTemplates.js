@@ -1,12 +1,25 @@
 // Step templates for recipe creation
+import { availableIngredients } from './ingredients.js';
+
+// Helper function to create ingredient with defaults
+const createIngredient = (name, defaultValue, unit = 'g') => {
+  const baseIngredient = availableIngredients.find(ing => ing.name === name);
+  return {
+    name: name,
+    type: baseIngredient?.type || 'generic',
+    unit: unit,
+    defaultValue: defaultValue
+  };
+};
+
 export const stepTemplates = [
   {
     name: "TangZhong",
     defaultDuration: "5 minutes",
     temperature: 2,
     ingredients: [
-      { name: "flour", type: "flour", unit: "g", defaultValue: 50 },
-      { name: "boiling water", type: "water", unit: "g", defaultValue: 100 }
+      createIngredient("flour", 50),
+      createIngredient("boiling water", 100)
     ]
   },
   {
@@ -23,8 +36,8 @@ export const stepTemplates = [
     name: "Autolyse",
     defaultDuration: "30 minutes",
     ingredients: [
-      { name: "flour", type: "flour", unit: "g", defaultValue: 500 },
-      { name: "water", type: "water", unit: "g", defaultValue: 360 }
+      createIngredient("flour", 500),
+      createIngredient("water", 360)
     ]
   },
   {

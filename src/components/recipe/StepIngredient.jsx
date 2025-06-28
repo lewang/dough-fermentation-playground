@@ -1,4 +1,5 @@
 import { h } from 'preact';
+import { EditableText } from '../ui/EditableText.jsx';
 
 export function StepIngredient({ 
   ingredient, 
@@ -12,6 +13,10 @@ export function StepIngredient({
     onUpdate(index, { ...ingredient, value: newValue });
   };
 
+  const handleNameChange = (newName) => {
+    onUpdate(index, { ...ingredient, name: newName });
+  };
+
   return (
     <div 
       className="step-ingredient"
@@ -23,7 +28,7 @@ export function StepIngredient({
       style={{
         display: 'flex',
         alignItems: 'center',
-        gap: '0.5rem',
+        gap: '0.75rem',
         padding: '0.5rem',
         background: 'var(--surface-secondary)',
         border: '1px solid var(--border-color)',
@@ -43,9 +48,13 @@ export function StepIngredient({
         ≡
       </span>
       
-      <span style={{ flex: 1, fontSize: '0.9rem' }}>
-        {ingredient.name}:
-      </span>
+      <div style={{ flex: 1, fontSize: '0.9rem', display: 'flex', alignItems: 'center', minWidth: 0 }}>
+        <EditableText
+          value={ingredient.name}
+          onChange={handleNameChange}
+          className="ingredient-name"
+        />
+      </div>
       
       <input
         type="number"
@@ -54,17 +63,18 @@ export function StepIngredient({
         value={ingredient.value || ingredient.defaultValue || ''}
         onChange={handleValueChange}
         style={{
-          width: '80px',
+          width: '70px',
           padding: '0.25rem',
           border: '1px solid var(--border-color)',
           borderRadius: '4px',
           background: 'var(--surface-color)',
           color: 'var(--text-primary)',
-          fontSize: '0.9rem'
+          fontSize: '0.9rem',
+          flexShrink: 0
         }}
       />
       
-      <span style={{ fontSize: '0.8rem', color: 'var(--text-tertiary)' }}>
+      <span style={{ fontSize: '0.8rem', color: 'var(--text-tertiary)', flexShrink: 0, minWidth: '20px' }}>
         {ingredient.unit}
       </span>
       
