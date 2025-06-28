@@ -33,6 +33,25 @@ body {
     to { opacity: 1; transform: translateY(0); }
 }
 
+@keyframes updatePulse {
+    0% { 
+        transform: scale(1); 
+        box-shadow: 0 10px 30px var(--shadow-color);
+    }
+    50% { 
+        transform: scale(1.02); 
+        box-shadow: 0 15px 40px var(--shadow-color), 0 0 20px rgba(0, 123, 255, 0.3);
+    }
+    100% { 
+        transform: scale(1); 
+        box-shadow: 0 10px 30px var(--shadow-color);
+    }
+}
+
+.content-container.updating {
+    animation: updatePulse 0.3s ease-out;
+}
+
 /* Responsive adjustments */
 @media (max-width: 768px) {
     .content-container {

@@ -178,6 +178,17 @@ export function RecipeMaker({ active }) {
     try {
       const data = JSON.parse(debugJsonText);
       
+      // Add update animation class to content container
+      const contentContainer = document.querySelector('.content-container');
+      if (contentContainer) {
+        contentContainer.classList.add('updating');
+        
+        // Remove class after animation
+        setTimeout(() => {
+          contentContainer.classList.remove('updating');
+        }, 300);
+      }
+      
       // Update recipe name if provided
       if (data.recipeName) {
         setRecipeName(data.recipeName);
@@ -193,7 +204,7 @@ export function RecipeMaker({ active }) {
         setSteps(data.steps);
       }
       
-      alert('Recipe updated successfully from JSON!');
+      // No alert - silent update with visual feedback
     } catch (error) {
       alert('Invalid JSON format. Please check your JSON syntax.');
     }
