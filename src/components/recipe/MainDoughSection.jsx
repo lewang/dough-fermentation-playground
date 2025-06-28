@@ -24,7 +24,7 @@ export function MainDoughSection({
   ];
 
   return (
-    <Section title="🍞 Main Dough" className="mandatory">
+    <Section title="🥖 Properties" className="mandatory">
       <InputRow>
         <InputGroup
           label="Dough Portions"

@@ -4,6 +4,7 @@ import { Button } from '../components/ui/Button.jsx';
 import { TabContent } from '../components/ui/TabContent.jsx';
 import { RecipeHeader } from '../components/recipe/RecipeHeader.jsx';
 import { MainDoughSection } from '../components/recipe/MainDoughSection.jsx';
+import { StepsSection } from '../components/recipe/StepsSection.jsx';
 import { AddonSearchSection } from '../components/recipe/AddonSearchSection.jsx';
 import { RecipeDisplay } from '../components/recipe/RecipeDisplay.jsx';
 import { Section } from '../components/ui/Section.jsx';
@@ -40,6 +41,9 @@ export function RecipeMaker({ active }) {
   // Addon state
   const [activeAddons, setActiveAddons] = useState(new Set());
   const [addonData, setAddonData] = useState({});
+  
+  // Steps state
+  const [steps, setSteps] = useState([]);
   
   // Calculated results
   const [calculatedData, setCalculatedData] = useState(null);
@@ -204,7 +208,8 @@ export function RecipeMaker({ active }) {
     const data = {
       recipeName,
       mandatory: recipeData,
-      addons: addonData
+      addons: addonData,
+      steps: steps
     };
     
     const encodedData = encodeURIComponent(JSON.stringify(data));
@@ -224,7 +229,8 @@ export function RecipeMaker({ active }) {
     const data = {
       recipeName,
       mandatory: recipeData,
-      addons: addonData
+      addons: addonData,
+      steps: steps
     };
     
     const jsonString = JSON.stringify(data, null, 2);
@@ -336,6 +342,11 @@ export function RecipeMaker({ active }) {
         onChange={handleRecipeChange}
       />
       
+      <StepsSection
+        steps={steps}
+        onStepsChange={setSteps}
+      />
+      
       <AddonSearchSection
         availableAddons={availableAddons}
         activeAddons={activeAddons}
@@ -358,7 +369,7 @@ export function RecipeMaker({ active }) {
         <textarea 
           readOnly 
           placeholder="Recipe data will appear here..."
-          value={JSON.stringify({ recipeName, mandatory: recipeData, addons: addonData }, null, 2)}
+          value={JSON.stringify({ recipeName, mandatory: recipeData, addons: addonData, steps: steps }, null, 2)}
         />
         <div className="debug-controls">
           <Button onClick={shareRecipe}>
