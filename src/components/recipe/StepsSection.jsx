@@ -128,7 +128,8 @@ export function StepsSection({ steps, onStepsChange }) {
           margin: 0,
           color: 'var(--text-primary)',
           fontSize: '1.25rem',
-          fontWeight: '600'
+          fontWeight: '600',
+          borderBottom: 'none'
         }}>
           ⏰ Steps
         </h2>
