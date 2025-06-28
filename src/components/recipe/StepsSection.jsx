@@ -61,11 +61,7 @@ export function StepsSection({ steps, onStepsChange }) {
     onStepsChange(steps.filter((_, i) => i !== index));
   };
 
-  const setSteps = (newSteps) => {
-    onStepsChange(newSteps);
-  };
-
-  const stepDragHandlers = createDragHandlers(steps, setSteps);
+  const stepDragHandlers = createDragHandlers(steps, onStepsChange);
 
   const handleSearchKeyDown = (e) => {
     switch(e.key) {
@@ -90,10 +86,6 @@ export function StepsSection({ steps, onStepsChange }) {
         searchRef.current?.querySelector('input')?.blur();
         break;
     }
-  };
-
-  const handleSearchFocus = () => {
-    setShowSuggestions(true);
   };
 
   const handleSearchChange = (e) => {
@@ -160,7 +152,7 @@ export function StepsSection({ steps, onStepsChange }) {
               value={searchQuery}
               onChange={handleSearchChange}
               onInput={handleSearchChange}
-              onFocus={handleSearchFocus}
+              onFocus={() => setShowSuggestions(true)}
               onBlur={handleSearchBlur}
               onKeyDown={handleSearchKeyDown}
               style={{
@@ -191,7 +183,10 @@ export function StepsSection({ steps, onStepsChange }) {
                 {filteredTemplates.map((template, index) => (
                   <div
                     key={template.name}
-                    onClick={() => addStep(template)}
+                    onMouseDown={(e) => {
+                      e.preventDefault(); // Prevent input from losing focus
+                      addStep(template);
+                    }}
                     style={{
                       padding: '0.75rem',
                       cursor: 'pointer',
