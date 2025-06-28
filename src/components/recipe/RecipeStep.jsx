@@ -3,6 +3,7 @@ import { EditableText } from '../ui/EditableText.jsx';
 import { DurationInput } from './DurationInput.jsx';
 import { StepIngredient } from './StepIngredient.jsx';
 import { createDragHandlers } from '../../utils/dragDrop.js';
+import { parseStepName } from '../../utils/stepUtils.js';
 
 export function RecipeStep({ 
   step, 
@@ -43,6 +44,9 @@ export function RecipeStep({
 
   const ingredientDragHandlers = createDragHandlers(step.ingredients || [], setIngredients);
 
+  // Parse group ID and title from step name
+  const { groupId, title } = parseStepName(step.name);
+
   return (
     <div 
       className="recipe-step"
@@ -80,6 +84,15 @@ export function RecipeStep({
           color: 'var(--text-secondary)'
         }}>
           {index + 1}.
+          {groupId && (
+            <span style={{ 
+              color: 'var(--color-primary)', 
+              fontSize: '0.8rem',
+              marginLeft: '0.25rem'
+            }}>
+              [{groupId}]
+            </span>
+          )}
         </span>
         
         <div style={{ flex: 1 }}>
@@ -88,6 +101,7 @@ export function RecipeStep({
             onChange={(value) => updateStep('name', value)}
             isTitle={true}
             className="step-title"
+            placeholder="Enter step name (use 'groupId. title' format for grouping)"
           />
         </div>
         
@@ -125,25 +139,6 @@ export function RecipeStep({
           />
         </div>
 
-        <div>
-          <label style={{ fontSize: '0.9rem', fontWeight: '500', display: 'block', marginBottom: '0.25rem' }}>
-            Group ID:
-          </label>
-          <input
-            type="text"
-            value={step.groupId || ''}
-            onChange={(e) => updateStep('groupId', e.target.value)}
-            placeholder="parallel tasks"
-            style={{
-              padding: '0.5rem',
-              border: '1px solid var(--border-color)',
-              borderRadius: '4px',
-              background: 'var(--surface-color)',
-              color: 'var(--text-primary)',
-              width: '150px'
-            }}
-          />
-        </div>
 
         {step.temperature !== undefined && (
           <div>

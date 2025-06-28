@@ -8,6 +8,7 @@ import { StepsSection } from '../components/recipe/StepsSection.jsx';
 import { RecipeDisplay } from '../components/recipe/RecipeDisplay.jsx';
 import { Section } from '../components/ui/Section.jsx';
 import { recipeCalculations } from '../scripts/recipeCalculations.js';
+import { parseStepName } from '../utils/stepUtils.js';
 
 
 export function RecipeMaker({ active }) {
@@ -112,12 +113,24 @@ export function RecipeMaker({ active }) {
     calculateRecipe();
   }, [recipeData]);
 
+  // Transform steps to include parsed group IDs
+  const getStepsWithGroupIds = () => {
+    return steps.map(step => {
+      const { groupId, title } = parseStepName(step.name);
+      return {
+        ...step,
+        groupId: groupId || null,
+        displayTitle: title
+      };
+    });
+  };
+
   // Share recipe
   const shareRecipe = () => {
     const data = {
       recipeName,
       mandatory: recipeData,
-      steps: steps
+      steps: getStepsWithGroupIds()
     };
     
     const encodedData = encodeURIComponent(JSON.stringify(data));
@@ -137,7 +150,7 @@ export function RecipeMaker({ active }) {
     const data = {
       recipeName,
       mandatory: recipeData,
-      steps: steps
+      steps: getStepsWithGroupIds()
     };
     
     const jsonString = JSON.stringify(data, null, 2);
@@ -185,7 +198,7 @@ export function RecipeMaker({ active }) {
         <textarea 
           readOnly 
           placeholder="Recipe data will appear here..."
-          value={JSON.stringify({ recipeName, mandatory: recipeData, steps: steps }, null, 2)}
+          value={JSON.stringify({ recipeName, mandatory: recipeData, steps: getStepsWithGroupIds() }, null, 2)}
         />
         <div className="debug-controls">
           <Button onClick={shareRecipe}>

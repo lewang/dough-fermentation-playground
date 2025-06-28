@@ -38,7 +38,7 @@ export function EditableText({
       <input
         type="text"
         value={editValue}
-        onChange={(e) => setEditValue(e.target.value)}
+        onInput={(e) => setEditValue(e.target.value)}
         onBlur={() => finishEdit(true)}
         onKeyDown={handleKeyDown}
         className={`editable-input ${className}`}

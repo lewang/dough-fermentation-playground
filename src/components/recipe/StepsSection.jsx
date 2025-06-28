@@ -23,7 +23,6 @@ export function StepsSection({ steps, onStepsChange }) {
       id: Date.now(),
       name: template.name,
       duration: template.defaultDuration,
-      groupId: '',
       ...(template.temperature !== undefined && { temperature: template.temperature }),
       ...(template.reps !== undefined && { reps: template.reps }),
       ...(template.ingredients && { 
