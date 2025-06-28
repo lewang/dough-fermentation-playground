@@ -262,7 +262,7 @@ export function RecipeStep({
       {!isCollapsed && step.ingredients && step.ingredients.length > 0 && (
         <div>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
-            <label style={{ fontSize: '0.9rem', fontWeight: '500' }}>
+            <label className="ingredients-label">
               Ingredients:
             </label>
             <div style={{ position: 'relative' }}>
