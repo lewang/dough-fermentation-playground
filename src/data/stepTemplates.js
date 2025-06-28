@@ -16,7 +16,6 @@ export const stepTemplates = [
   {
     name: "TangZhong",
     defaultDuration: "5 minutes",
-    temperature: 2,
     ingredients: [
       createIngredient("flour", 50),
       createIngredient("boiling water", 100)

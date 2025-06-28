@@ -7,7 +7,7 @@ export const availableIngredients = [
   { "name": "Milk (90% water)", "type": "water", "scaling": 0.9 },
   { "name": "Sugar" },
   { "name": "Butter" },
-  { "name": "Eggs" },
+  { "name": "Eggs", "type": "water", "scaling": 0.75 },
   { "name": "Baking Powder" },
   { "name": "water", "type": "water" },
   { "name": "salt" },

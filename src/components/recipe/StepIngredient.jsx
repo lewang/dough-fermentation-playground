@@ -27,7 +27,7 @@ export function StepIngredient({
       onDrop={dragHandlers.handleDrop(index)}
       style={{
         display: 'flex',
-        alignItems: 'center',
+        alignItems: 'flex-start',
         gap: '0.75rem',
         padding: '0.75rem',
         background: 'var(--surface-secondary)',
@@ -57,49 +57,60 @@ export function StepIngredient({
         />
       </div>
       
-      <input
-        type="number"
-        min="0"
-        step="0.1"
-        value={ingredient.value || ingredient.defaultValue || ''}
-        onChange={handleValueChange}
-        style={{
-          width: '80px',
-          padding: '0.5rem',
-          border: '1px solid var(--border-color)',
-          borderRadius: '4px',
-          background: 'var(--surface-color)',
-          color: 'var(--text-primary)',
-          fontSize: '0.9rem',
-          flexShrink: 0
-        }}
-      />
+      <div style={{ display: 'flex', alignItems: 'flex-start', marginTop: '0.1rem' }}>
+        <input
+          type="number"
+          min="0"
+          step="0.1"
+          value={ingredient.value || ingredient.defaultValue || ''}
+          onChange={handleValueChange}
+          style={{
+            width: '80px',
+            padding: '0.5rem',
+            border: '1px solid var(--border-color)',
+            borderRadius: '4px',
+            background: 'var(--surface-color)',
+            color: 'var(--text-primary)',
+            fontSize: '0.9rem',
+            flexShrink: 0
+          }}
+        />
+      </div>
       
-      <span style={{ fontSize: '0.8rem', color: 'var(--text-tertiary)', flexShrink: 0, minWidth: '20px' }}>
-        {ingredient.unit}
-      </span>
+      <div className="ingredient-unit-container">
+        <span className="unit-label">{ingredient.unit}</span>
+        {ingredient.scaling && ingredient.scaling < 1 && (ingredient.value || ingredient.defaultValue) && (
+          <div className="water-scaling">
+            <span>
+              ({((ingredient.value || ingredient.defaultValue) * ingredient.scaling).toFixed(1)}g water)
+            </span>
+          </div>
+        )}
+      </div>
       
-      <button
-        onClick={() => onRemove(index)}
-        className="remove-btn"
-        style={{
-          background: 'rgba(239, 68, 68, 0.1)',
-          color: '#ef4444',
-          border: 'none',
-          borderRadius: '4px',
-          width: '24px',
-          height: '24px',
-          fontSize: '14px',
-          cursor: 'pointer',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          flexShrink: 0
-        }}
-        title="Remove ingredient"
-      >
-        ×
-      </button>
+      <div style={{ marginTop: '0.1rem' }}>
+        <button
+          onClick={() => onRemove(index)}
+          className="remove-btn"
+          style={{
+            background: 'rgba(239, 68, 68, 0.1)',
+            color: '#ef4444',
+            border: 'none',
+            borderRadius: '4px',
+            width: '24px',
+            height: '24px',
+            fontSize: '14px',
+            cursor: 'pointer',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            flexShrink: 0
+          }}
+          title="Remove ingredient"
+        >
+          ×
+        </button>
+      </div>
     </div>
   );
 }

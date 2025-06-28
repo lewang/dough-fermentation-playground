@@ -387,6 +387,30 @@ input.invalid {
     background: rgba(220, 53, 69, 0.1);
 }
 
+/* Step ingredient unit container with water scaling */
+.ingredient-unit-container {
+    font-size: 0.8rem;
+    color: var(--text-tertiary);
+    flex-shrink: 0;
+    min-width: 10em;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 0.5rem;
+    align-self: center;
+}
+
+.ingredient-unit-container .unit-label {
+    line-height: 1;
+}
+
+.ingredient-unit-container .water-scaling span {
+    font-size: 0.7rem;
+    color: var(--color-primary);
+    font-style: italic;
+    white-space: nowrap;
+}
+
 @media (max-width: 768px) {
     .input-row {
         grid-template-columns: 1fr;

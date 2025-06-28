@@ -12,7 +12,9 @@ export function RecipeStep({
   index, 
   onUpdate, 
   onRemove,
-  stepDragHandlers 
+  stepDragHandlers,
+  isCollapsed,
+  onToggleCollapse
 }) {
   // Ingredient search state
   const [showIngredientSearch, setShowIngredientSearch] = useState(false);
@@ -38,6 +40,13 @@ export function RecipeStep({
     setShowIngredientSearch(true);
     setIngredientQuery('');
     setSelectedIngredientIndex(-1);
+    
+    // Focus the input after it's rendered
+    setTimeout(() => {
+      if (ingredientSearchRef.current) {
+        ingredientSearchRef.current.focus();
+      }
+    }, 0);
   };
 
   const addIngredientFromSearch = (ingredient) => {
@@ -77,6 +86,18 @@ export function RecipeStep({
 
   // Parse group ID and title from step name
   const { groupId, title } = parseStepName(step.name);
+
+  // Generate step summary for collapsed view
+  const getStepSummary = () => {
+    const parts = [];
+    if (step.duration) parts.push(step.duration);
+    if (step.temperature !== undefined) parts.push(`${step.temperature}°C`);
+    if (step.reps !== undefined) parts.push(`${step.reps} reps`);
+    if (step.ingredients && step.ingredients.length > 0) {
+      parts.push(`${step.ingredients.length} ingredient${step.ingredients.length > 1 ? 's' : ''}`);
+    }
+    return parts.join(' • ') || 'No details';
+  };
 
   return (
     <div 
@@ -137,6 +158,27 @@ export function RecipeStep({
         </div>
         
         <button
+          onClick={onToggleCollapse}
+          style={{
+            background: 'rgba(107, 114, 128, 0.1)',
+            color: '#6b7280',
+            border: 'none',
+            borderRadius: '4px',
+            width: '24px',
+            height: '24px',
+            fontSize: '12px',
+            cursor: 'pointer',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            marginRight: '0.5rem'
+          }}
+          title={isCollapsed ? "Expand step" : "Collapse step"}
+        >
+          {isCollapsed ? '▶' : '▼'}
+        </button>
+        
+        <button
           onClick={() => onRemove(index)}
           className="remove-btn"
           style={{
@@ -158,7 +200,22 @@ export function RecipeStep({
         </button>
       </div>
 
+      {/* Collapsed summary */}
+      {isCollapsed && (
+        <div style={{ 
+          padding: '0.5rem', 
+          background: 'var(--surface-secondary)', 
+          borderRadius: '4px',
+          fontSize: '0.9rem',
+          color: 'var(--text-secondary)',
+          fontStyle: 'italic'
+        }}>
+          {getStepSummary()}
+        </div>
+      )}
+
       {/* Step details */}
+      {!isCollapsed && (
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1rem', marginBottom: '1rem' }}>
         <div>
           <label style={{ fontSize: '0.9rem', fontWeight: '500', display: 'block', marginBottom: '0.25rem' }}>
@@ -217,9 +274,10 @@ export function RecipeStep({
           </div>
         )}
       </div>
+      )}
 
       {/* Ingredients section */}
-      {step.ingredients && step.ingredients.length > 0 && (
+      {!isCollapsed && step.ingredients && step.ingredients.length > 0 && (
         <div>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
             <label style={{ fontSize: '0.9rem', fontWeight: '500' }}>
@@ -227,14 +285,19 @@ export function RecipeStep({
             </label>
             <div style={{ position: 'relative' }}>
               {showIngredientSearch ? (
-                <div style={{ position: 'relative' }}>
+                <div className="ingredient-search-container" style={{ position: 'relative' }}>
                   <input
                     ref={ingredientSearchRef}
                     type="text"
                     value={ingredientQuery}
                     onInput={(e) => setIngredientQuery(e.target.value)}
                     onKeyDown={handleIngredientSearchKeyDown}
-                    onBlur={() => setShowIngredientSearch(false)}
+                    onBlur={() => {
+                      // Small delay to allow dropdown clicks to register
+                      setTimeout(() => {
+                        setShowIngredientSearch(false);
+                      }, 150);
+                    }}
                     placeholder="Search ingredients..."
                     autoFocus
                     style={{
@@ -247,21 +310,20 @@ export function RecipeStep({
                       color: 'var(--text-primary)'
                     }}
                   />
-                  {ingredientQuery && (
-                    <div style={{
-                      position: 'absolute',
-                      top: '100%',
-                      left: 0,
-                      right: 0,
-                      background: 'var(--surface-color)',
-                      border: '1px solid var(--border-color)',
-                      borderRadius: '4px',
-                      maxHeight: '200px',
-                      overflowY: 'auto',
-                      zIndex: 1000,
-                      boxShadow: '0 4px 8px rgba(0,0,0,0.1)'
-                    }}>
-                      {getIngredientSuggestions(ingredientQuery).map((ingredient, i) => (
+                  <div style={{
+                    position: 'absolute',
+                    top: '100%',
+                    left: 0,
+                    right: 0,
+                    background: 'var(--surface-color)',
+                    border: '1px solid var(--border-color)',
+                    borderRadius: '4px',
+                    maxHeight: '200px',
+                    overflowY: 'auto',
+                    zIndex: 1000,
+                    boxShadow: '0 4px 8px rgba(0,0,0,0.1)'
+                  }}>
+                    {getIngredientSuggestions(ingredientQuery).map((ingredient, i) => (
                         <div
                           key={i}
                           onMouseDown={(e) => {
@@ -281,7 +343,6 @@ export function RecipeStep({
                         </div>
                       ))}
                     </div>
-                  )}
                 </div>
               ) : (
                 <button
@@ -321,17 +382,22 @@ export function RecipeStep({
       )}
 
       {/* Add ingredients button for steps without ingredients */}
-      {(!step.ingredients || step.ingredients.length === 0) && (
+      {!isCollapsed && (!step.ingredients || step.ingredients.length === 0) && (
         <div style={{ marginTop: '0.5rem', position: 'relative' }}>
           {showIngredientSearch ? (
-            <div style={{ position: 'relative' }}>
+            <div className="ingredient-search-container" style={{ position: 'relative' }}>
               <input
                 ref={ingredientSearchRef}
                 type="text"
                 value={ingredientQuery}
                 onInput={(e) => setIngredientQuery(e.target.value)}
                 onKeyDown={handleIngredientSearchKeyDown}
-                onBlur={() => setShowIngredientSearch(false)}
+                onBlur={() => {
+                  // Small delay to allow dropdown clicks to register
+                  setTimeout(() => {
+                    setShowIngredientSearch(false);
+                  }, 150);
+                }}
                 placeholder="Search ingredients..."
                 autoFocus
                 style={{
@@ -344,21 +410,20 @@ export function RecipeStep({
                   color: 'var(--text-primary)'
                 }}
               />
-              {ingredientQuery && (
-                <div style={{
-                  position: 'absolute',
-                  top: '100%',
-                  left: 0,
-                  right: 0,
-                  background: 'var(--surface-color)',
-                  border: '1px solid var(--border-color)',
-                  borderRadius: '4px',
-                  maxHeight: '200px',
-                  overflowY: 'auto',
-                  zIndex: 1000,
-                  boxShadow: '0 4px 8px rgba(0,0,0,0.1)'
-                }}>
-                  {getIngredientSuggestions(ingredientQuery).map((ingredient, i) => (
+              <div style={{
+                position: 'absolute',
+                top: '100%',
+                left: 0,
+                right: 0,
+                background: 'var(--surface-color)',
+                border: '1px solid var(--border-color)',
+                borderRadius: '4px',
+                maxHeight: '200px',
+                overflowY: 'auto',
+                zIndex: 1000,
+                boxShadow: '0 4px 8px rgba(0,0,0,0.1)'
+              }}>
+                {getIngredientSuggestions(ingredientQuery).map((ingredient, i) => (
                     <div
                       key={i}
                       onMouseDown={(e) => {
@@ -378,7 +443,6 @@ export function RecipeStep({
                     </div>
                   ))}
                 </div>
-              )}
             </div>
           ) : (
             <button

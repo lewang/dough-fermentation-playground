@@ -11,6 +11,9 @@ export function StepsSection({ steps, onStepsChange }) {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedIndex, setSelectedIndex] = useState(-1);
   const searchRef = useRef();
+  
+  // Collapse state management
+  const [collapsedSteps, setCollapsedSteps] = useState(new Set());
 
 
   const filteredTemplates = stepTemplates.filter(template =>
@@ -100,6 +103,29 @@ export function StepsSection({ steps, onStepsChange }) {
     setSearchQuery('');
   };
 
+  // Collapse all steps functionality
+  const toggleCollapseAll = () => {
+    const allStepIds = new Set(steps.map((_, index) => index));
+    if (collapsedSteps.size === steps.length) {
+      // If all collapsed, expand all
+      setCollapsedSteps(new Set());
+    } else {
+      // Otherwise, collapse all
+      setCollapsedSteps(allStepIds);
+    }
+  };
+
+  // Individual step collapse management
+  const toggleStepCollapse = (stepIndex) => {
+    const newCollapsedSteps = new Set(collapsedSteps);
+    if (newCollapsedSteps.has(stepIndex)) {
+      newCollapsedSteps.delete(stepIndex);
+    } else {
+      newCollapsedSteps.add(stepIndex);
+    }
+    setCollapsedSteps(newCollapsedSteps);
+  };
+
   return (
     <section className="recipe-section steps-section">
       {/* Custom header with + button */}
@@ -120,7 +146,28 @@ export function StepsSection({ steps, onStepsChange }) {
         }}>
           ⏰ Steps
         </h2>
-        <button
+        <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+          {steps.length > 0 && (
+            <button
+              onClick={toggleCollapseAll}
+              style={{
+                background: 'var(--surface-secondary)',
+                color: 'var(--text-secondary)',
+                border: '1px solid var(--border-color)',
+                borderRadius: '6px',
+                padding: '0.25rem 0.5rem',
+                fontSize: '0.8rem',
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.25rem'
+              }}
+              title={collapsedSteps.size === steps.length ? "Expand all steps" : "Collapse all steps"}
+            >
+              {collapsedSteps.size === steps.length ? '▶ Expand All' : '▼ Collapse All'}
+            </button>
+          )}
+          <button
           onClick={showAddStepInput}
           style={{
             background: 'var(--color-primary)',
@@ -139,6 +186,7 @@ export function StepsSection({ steps, onStepsChange }) {
         >
           +
         </button>
+        </div>
       </div>
 
       {/* Add step search interface - only show when needed */}
@@ -230,6 +278,8 @@ export function StepsSection({ steps, onStepsChange }) {
               onUpdate={updateStep}
               onRemove={removeStep}
               stepDragHandlers={stepDragHandlers}
+              isCollapsed={collapsedSteps.has(index)}
+              onToggleCollapse={() => toggleStepCollapse(index)}
             />
           ))
         )}
