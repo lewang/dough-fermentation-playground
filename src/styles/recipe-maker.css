@@ -397,6 +397,13 @@ input.invalid {
     position: relative;
 }
 
+.inline-step-summary {
+    font-size: 12px;
+    color: var(--text-tertiary);
+    font-style: italic;
+    white-space: nowrap;
+}
+
 /* Step ingredient styling */
 .step-ingredient {
     display: flex;

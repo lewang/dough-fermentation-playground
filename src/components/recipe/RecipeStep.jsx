@@ -109,7 +109,7 @@ export function RecipeStep({
       onDrop={stepDragHandlers.handleDrop(index)}
     >
       {/* Drag handle and step header */}
-      <div style={{ display: 'flex', alignItems: 'center', marginBottom: '1rem' }}>
+      <div style={{ display: 'flex', alignItems: 'center', marginBottom: isCollapsed ? '0' : '1rem' }}>
         <span 
           style={{ 
             color: 'var(--text-tertiary)', 
@@ -139,7 +139,7 @@ export function RecipeStep({
           )}
         </span>
         
-        <div style={{ flex: 1 }}>
+        <div style={{ flex: 1, display: 'flex', alignItems: 'center', gap: '12px' }}>
           <EditableText
             value={step.name}
             onChange={(value) => updateStep('name', value)}
@@ -147,6 +147,9 @@ export function RecipeStep({
             className="step-title"
             placeholder="Enter step name (use 'groupId. title' format for grouping)"
           />
+          {isCollapsed && (
+            <span className="inline-step-summary">{getStepSummary()}</span>
+          )}
         </div>
         
         <button
@@ -192,19 +195,6 @@ export function RecipeStep({
         </button>
       </div>
 
-      {/* Collapsed summary */}
-      {isCollapsed && (
-        <div style={{ 
-          padding: '0.5rem', 
-          background: 'var(--surface-secondary)', 
-          borderRadius: '4px',
-          fontSize: '0.9rem',
-          color: 'var(--text-secondary)',
-          fontStyle: 'italic'
-        }}>
-          {getStepSummary()}
-        </div>
-      )}
 
       {/* Step details */}
       {!isCollapsed && (
