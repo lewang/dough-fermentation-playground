@@ -246,20 +246,11 @@ export function RecipeMaker({ active }) {
       
       return (
         <div key={addonId} className="addon-item">
-          <div className="addon-header">
-            <label>{addon.name}:</label>
-            <button 
-              className="remove-btn" 
-              onClick={() => handleRemoveAddon(addonId)}
-            >
-              Remove
-            </button>
-          </div>
+          <label className="addon-label">{addon.name}:</label>
           
           {addonId === 'tangzhong' ? (
-            <div style={{ display: 'flex', gap: '0.5rem', flex: 1 }}>
-              <div style={{ flex: 1 }}>
-                <label style={{ fontSize: '0.8rem' }}>Flour (g):</label>
+            <div className="addon-inputs">
+              <div className="input-group">
                 <input 
                   type="number" 
                   min="0" 
@@ -267,9 +258,9 @@ export function RecipeMaker({ active }) {
                   value={data.flour || ''}
                   onChange={(e) => handleAddonChange(addonId, 'flour', parseFloat(e.target.value) || 0)}
                 />
+                <span className="unit">Flour (g)</span>
               </div>
-              <div style={{ flex: 1 }}>
-                <label style={{ fontSize: '0.8rem' }}>Hydration (%):</label>
+              <div className="input-group">
                 <input 
                   type="number" 
                   min="0" 
@@ -277,11 +268,12 @@ export function RecipeMaker({ active }) {
                   value={data.hydration || 200}
                   onChange={(e) => handleAddonChange(addonId, 'hydration', parseFloat(e.target.value) || 200)}
                 />
+                <span className="unit">Hydration (% of tangzhong flour)</span>
               </div>
             </div>
           ) : addonId === 'whole-wheat-flour' ? (
-            <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'end' }}>
-              <div style={{ flex: 1 }}>
+            <div className="addon-inputs">
+              <div className="input-group">
                 <input 
                   type="number" 
                   min="0" 
@@ -289,25 +281,36 @@ export function RecipeMaker({ active }) {
                   value={data.amount || ''}
                   onChange={(e) => handleAddonChange(addonId, 'amount', parseFloat(e.target.value) || 0)}
                 />
+                <select 
+                  value={data.percentage || 'g'}
+                  onChange={(e) => handleAddonChange(addonId, 'percentage', e.target.value)}
+                >
+                  <option value="percent">% of all flour</option>
+                  <option value="grams">g</option>
+                </select>
               </div>
-              <select 
-                value={data.percentage || 'g'}
-                onChange={(e) => handleAddonChange(addonId, 'percentage', e.target.value)}
-              >
-                <option value="g">g</option>
-                <option value="%">%</option>
-              </select>
             </div>
           ) : (
-            <input 
-              type="number" 
-              min="0" 
-              step="0.1" 
-              value={data.amount || ''}
-              onChange={(e) => handleAddonChange(addonId, 'amount', parseFloat(e.target.value) || 0)}
-              placeholder="Amount (g)"
-            />
+            <div className="addon-inputs">
+              <div className="input-group">
+                <input 
+                  type="number" 
+                  min="0" 
+                  step="0.1" 
+                  value={data.amount || ''}
+                  onChange={(e) => handleAddonChange(addonId, 'amount', parseFloat(e.target.value) || 0)}
+                />
+                <span className="unit">g</span>
+              </div>
+            </div>
           )}
+          <button 
+            className="remove-btn" 
+            onClick={() => handleRemoveAddon(addonId)}
+            title="Remove"
+          >
+            ×
+          </button>
         </div>
       );
     });
